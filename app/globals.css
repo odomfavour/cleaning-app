@@ -1,0 +1,113 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* shadcn/ui theme tokens. `primary` is the Cleanin navy (#0a3d5c). */
+:root {
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+  --primary: #0a3d5c;
+  --primary-foreground: #ffffff;
+  --secondary: #eef5f9;
+  --secondary-foreground: #0a3d5c;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #eef5f9;
+  --accent-foreground: #0a3d5c;
+  --destructive: #dc2626;
+  --border: #e5e7eb;
+  --input: #d1d5db;
+  --ring: #2563eb;
+}
+
+.dark {
+  --background: #0b1620;
+  --foreground: #f3f4f6;
+  --card: #101e2b;
+  --card-foreground: #f3f4f6;
+  --popover: #101e2b;
+  --popover-foreground: #f3f4f6;
+  --primary: #5aa9d6;
+  --primary-foreground: #06202f;
+  --secondary: #17293a;
+  --secondary-foreground: #e5eef5;
+  --muted: #17293a;
+  --muted-foreground: #9ca3af;
+  --accent: #17293a;
+  --accent-foreground: #e5eef5;
+  --destructive: #f87171;
+  --border: #1f3346;
+  --input: #2a4258;
+  --ring: #5aa9d6;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Existing landing-page brand scale (kept so the marketing sections don't change). */
+  --color-brand: #0a3d5c;
+  --color-brand-700: #0d4663;
+  --color-brand-100: #d9e8f1;
+  --color-brand-50: #eef5f9;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  /* Keyboard focus for plain links/buttons; shadcn components override this with their own ring. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Used by the landing-page sections */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sheet-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes pop-in { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
+.animate-fade-in { animation: fade-in .18s ease-out; }
+.animate-sheet-up { animation: sheet-up .22s ease-out; }
+.animate-pop-in { animation: pop-in .18s ease-out; }
