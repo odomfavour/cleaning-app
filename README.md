@@ -1,7 +1,7 @@
-# Cleanin: cleaning-service booking platform (frontend)
+# Cleanin: cleaning-service booking platform
 
-Next.js (App Router) · TypeScript · Tailwind v4 · shadcn/ui (Radix) · React Hook Form + Zod · Lucide · Sonner.
-No backend yet: all data comes from a mock API layer that persists to `localStorage`.
+Next.js (App Router) · TypeScript · Tailwind v4 · MongoDB · shadcn/ui (Radix) · React Hook Form + Zod · Lucide · Sonner.
+Data is served by Next.js Route Handlers connected to MongoDB.
 
 ```bash
 pnpm install
@@ -18,17 +18,13 @@ Customers do **not** need an account to request a cleaning.
 
 - `/request-cleaning` (public) and `/dashboard/request-cleaning` (logged in) render the same `components/request-form/RequestForm` with `mode="public" | "account"`.
 - A guest submission creates a customer record with `hasAccount: false`. A reference number is a display ID only: `/request/[reference]` shows status and masked contact details; everything else needs a one-time code sent to the email/phone on the request (`VerifyAccess`, `AccessGate`) or a sign-in.
-- Mock code is `123456`. Creating an account with the same email claims the guest's requests (the real backend must verify the email first).
+- Creating an account with the same email claims the guest's verified requests.
 
-## Demo
-Customer `chiamaka@example.com`, admin `admin@cleanin.ng`, staff `staff@cleanin.ng` (any password; `wrong` shows the error state).
-Guest demo: open `/request/REQ-1029` (quote ready, needs verification, code `123456`) or `/request/REQ-1030` (under review).
-Reset demo data by clearing `localStorage` keys `cleanin-demo-v2` and `cleanin-session-v1`.
-
-## Replacing the mock layer with Next.js Route Handlers + MongoDB
-UI code only imports `api` from `lib/api`. To go live, re-implement `lib/api/index.ts` with `fetch` calls
-(calling your `app/api/**/route.ts` handlers) that keep the same method names and return types (`api.requests.getAll()`, `api.quotes.accept(id)`, …).
-Then delete `lib/api/db.ts` and `lib/mock/`. Domain types live in `lib/types.ts`.
+## Backend Architecture
+The backend is built with Next.js Route Handlers (`app/api/**/route.ts`) backed by MongoDB and Mongoose models in `server/models/`.
+- Client services in `lib/api/services/` call these endpoints with Axios.
+- React Query hooks in `lib/hooks/` handle query caching, mutations, and automatic cache invalidation.
+- Domain types live in `lib/types.ts`.
 
 ## Structure
 - `components/ui`: **shadcn/ui** components (button, input, dialog, sheet, popover, tabs, table, accordion, calendar, …). Add more with `pnpm dlx shadcn@latest add <name>`; theme tokens live in `app/globals.css` (`--primary` is the Cleanin navy).

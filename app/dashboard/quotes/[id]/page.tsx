@@ -83,7 +83,9 @@ export default function QuotePage() {
           </Banner>
         )}
         {quote.status === "declined" && (
-          <Banner tone="red" icon={XCircle}>You declined this quote.</Banner>
+          <Banner tone="red" icon={XCircle}>
+            You declined this quote.
+          </Banner>
         )}
         {(quote.status === "expired" || expired) && (
           <Banner tone="amber" icon={AlertTriangle}>
@@ -95,21 +97,34 @@ export default function QuotePage() {
           <CardBody className="space-y-5">
             <div>
               <p className="font-semibold">{request.services.join(", ")}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{request.address}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {request.address}
+              </p>
               {request.preferredDate && (
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Preferred date: {new Date(request.preferredDate).toLocaleDateString("en-NG")}
-                  {request.preferredTimeSlot ? `, ${request.preferredTimeSlot}` : ""}
+                  Preferred date:{" "}
+                  {new Date(request.preferredDate).toLocaleDateString("en-NG")}
+                  {request.preferredTimeSlot
+                    ? `, ${request.preferredTimeSlot}`
+                    : ""}
                 </p>
               )}
             </div>
             <div className="divide-y rounded-lg border">
               {quote.items.map((item) => (
-                <div key={item.id} className="flex justify-between gap-4 p-4 text-sm">
+                <div
+                  key={item.id}
+                  className="flex justify-between gap-4 p-4 text-sm"
+                >
                   <span>
-                    {item.description} <span className="text-muted-foreground">× {item.quantity}</span>
+                    {item.description}{" "}
+                    <span className="text-muted-foreground">
+                      × {item.quantity}
+                    </span>
                   </span>
-                  <span className="font-medium">{formatNaira(item.totalKobo)}</span>
+                  <span className="font-medium">
+                    {formatNaira(item.totalKobo)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -127,7 +142,10 @@ export default function QuotePage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button
                   onClick={() => responseMutation.mutate("accept")}
-                  loading={responseMutation.isPending && responseMutation.variables === "accept"}
+                  loading={
+                    responseMutation.isPending &&
+                    responseMutation.variables === "accept"
+                  }
                 >
                   Accept &amp; continue to payment
                 </Button>
@@ -152,7 +170,9 @@ export default function QuotePage() {
         open={declineOpen}
         onClose={() => setDeclineOpen(false)}
         onConfirm={() => responseMutation.mutate("decline")}
-        loading={responseMutation.isPending && responseMutation.variables === "decline"}
+        loading={
+          responseMutation.isPending && responseMutation.variables === "decline"
+        }
         tone="danger"
         title="Decline this quote?"
         description="This quote will be closed. Contact our team if you would like to discuss it first."
@@ -162,7 +182,27 @@ export default function QuotePage() {
   );
 }
 
-function Banner({ tone, icon: Icon, children }: { tone: "green" | "red" | "amber"; icon: typeof XCircle; children: React.ReactNode }) {
-  const c = { green: "border-emerald-200 bg-emerald-50 text-emerald-900", red: "border-red-200 bg-red-50 text-red-900", amber: "border-amber-200 bg-amber-50 text-amber-900" }[tone];
-  return <div role="status" className={`flex gap-3 rounded-xl border p-4 text-sm ${c}`}><Icon className="mt-0.5 h-5 w-5 shrink-0" /><p>{children}</p></div>;
+function Banner({
+  tone,
+  icon: Icon,
+  children,
+}: {
+  tone: "green" | "red" | "amber";
+  icon: typeof XCircle;
+  children: React.ReactNode;
+}) {
+  const c = {
+    green: "border-emerald-200 bg-emerald-50 text-emerald-900",
+    red: "border-red-200 bg-red-50 text-red-900",
+    amber: "border-amber-200 bg-amber-50 text-amber-900",
+  }[tone];
+  return (
+    <div
+      role="status"
+      className={`flex gap-3 rounded-xl border p-4 text-sm ${c}`}
+    >
+      <Icon className="mt-0.5 h-5 w-5 shrink-0" />
+      <p>{children}</p>
+    </div>
+  );
 }

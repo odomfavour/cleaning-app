@@ -16,11 +16,7 @@ const registerSchema = z.object({
   lastName: z.string().trim().min(1).max(100),
   email: z.string().trim().email().max(320),
   phone: z.string().trim().min(7).max(30),
-  password: z
-    .string()
-    .min(8)
-    .regex(/[A-Z]/)
-    .regex(/\d/),
+  password: z.string().min(8).regex(/[A-Z]/).regex(/\d/),
 });
 
 export async function POST(request: Request) {
@@ -29,7 +25,10 @@ export async function POST(request: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { message: "Enter valid account details and a password with at least 8 characters, one uppercase letter, and one number." },
+        {
+          message:
+            "Enter valid account details and a password with at least 8 characters, one uppercase letter, and one number.",
+        },
         { status: 400 },
       );
     }
@@ -44,7 +43,9 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "An account with this email already exists. Log in instead." },
+        {
+          message: "An account with this email already exists. Log in instead.",
+        },
         { status: 409 },
       );
     }
@@ -52,7 +53,10 @@ export async function POST(request: Request) {
     if (existingCustomer) {
       if (existingCustomer.hasAccount) {
         return NextResponse.json(
-          { message: "An account with this email already exists. Log in instead." },
+          {
+            message:
+              "An account with this email already exists. Log in instead.",
+          },
           { status: 409 },
         );
       }
@@ -66,17 +70,19 @@ export async function POST(request: Request) {
 
       const token = (await cookies()).get(REQUEST_ACCESS_COOKIE_NAME)?.value;
       const access = token ? verifyRequestAccessToken(token) : null;
-      const ownsVerifiedRequest = access && access.customerId === existingCustomer._id.toString()
-        ? await CleaningRequest.exists({
-            _id: access.requestId,
-            customerId: existingCustomer._id,
-          })
-        : null;
+      const ownsVerifiedRequest =
+        access && access.customerId === existingCustomer._id.toString()
+          ? await CleaningRequest.exists({
+              _id: access.requestId,
+              customerId: existingCustomer._id,
+            })
+          : null;
 
       if (!ownsVerifiedRequest) {
         return NextResponse.json(
           {
-            message: "This email is linked to a previous guest request. Track and verify that request before creating an account.",
+            message:
+              "This email is linked to a previous guest request. Track and verify that request before creating an account.",
           },
           { status: 409 },
         );
@@ -84,14 +90,16 @@ export async function POST(request: Request) {
     }
 
     const createdCustomer = !existingCustomer;
-    const customer = existingCustomer ?? await Customer.create({
-      firstName: parsed.data.firstName,
-      lastName: parsed.data.lastName,
-      email,
-      phone: parsed.data.phone,
-      hasAccount: false,
-      status: "active",
-    });
+    const customer =
+      existingCustomer ??
+      (await Customer.create({
+        firstName: parsed.data.firstName,
+        lastName: parsed.data.lastName,
+        email,
+        phone: parsed.data.phone,
+        hasAccount: false,
+        status: "active",
+      }));
     let createdUser: InstanceType<typeof User> | undefined;
 
     try {

@@ -1,17 +1,15 @@
 "use client";
-import { api } from "@/lib/api";
-import { useApi } from "@/lib/hooks";
+import { useQuery } from "@tanstack/react-query";
+import { getApiErrorMessage } from "@/lib/api/errors";
+import { getAdminWorkspace } from "@/lib/api/services/admin-workspace.service";
 
-/** Loads every collection the admin screens join across, with lookup helpers. */
+/** Loads the authenticated admin workspace with lookup helpers for existing screens. */
 export function useAdminData() {
-  const res = useApi(async () => {
-    const [customers, staff, services, requests, inspections, quotes, bookings, payments, reviews] = await Promise.all([
-      api.customers.getAll(), api.staff.getAll(), api.services.getAll(), api.requests.getAll(), api.inspections.getAll(),
-      api.quotes.getAll(), api.bookings.getAll(), api.payments.getAll(), api.reviews.getAll(),
-    ]);
-    return { customers, staff, services, requests, inspections, quotes, bookings, payments, reviews };
+  const query = useQuery({
+    queryKey: ["admin-workspace"],
+    queryFn: getAdminWorkspace,
   });
-  const d = res.data;
+  const d = query.data;
   const L = {
     customer: (id?: string) => d?.customers.find((c) => c.id === id),
     request: (id?: string) => d?.requests.find((r) => r.id === id),
@@ -21,5 +19,11 @@ export function useAdminData() {
     inspection: (id?: string) => d?.inspections.find((i) => i.id === id),
     payment: (id?: string) => d?.payments.find((p) => p.id === id),
   };
-  return { ...res, d, L };
+  return {
+    d,
+    L,
+    loading: query.isLoading,
+    error: query.error ? getApiErrorMessage(query.error) : null,
+    reload: () => void query.refetch(),
+  };
 }

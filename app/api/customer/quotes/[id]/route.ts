@@ -12,21 +12,38 @@ async function loadCustomerQuote(id: string) {
   const user = await getCurrentUser();
 
   if (!user) {
-    return { error: NextResponse.json({ message: "Login required." }, { status: 401 }) };
+    return {
+      error: NextResponse.json({ message: "Login required." }, { status: 401 }),
+    };
   }
 
   if (user.role !== "customer" || !user.customerId) {
-    return { error: NextResponse.json({ message: "Customer access required." }, { status: 403 }) };
+    return {
+      error: NextResponse.json(
+        { message: "Customer access required." },
+        { status: 403 },
+      ),
+    };
   }
 
   if (!Types.ObjectId.isValid(id)) {
-    return { error: NextResponse.json({ message: "Quote not found." }, { status: 404 }) };
+    return {
+      error: NextResponse.json(
+        { message: "Quote not found." },
+        { status: 404 },
+      ),
+    };
   }
 
   const quote = await Quote.findOne({ _id: id, customerId: user.customerId });
 
   if (!quote) {
-    return { error: NextResponse.json({ message: "Quote not found." }, { status: 404 }) };
+    return {
+      error: NextResponse.json(
+        { message: "Quote not found." },
+        { status: 404 },
+      ),
+    };
   }
 
   const request = await CleaningRequest.findOne({
@@ -35,7 +52,12 @@ async function loadCustomerQuote(id: string) {
   });
 
   if (!request) {
-    return { error: NextResponse.json({ message: "Request not found." }, { status: 404 }) };
+    return {
+      error: NextResponse.json(
+        { message: "Request not found." },
+        { status: 404 },
+      ),
+    };
   }
 
   return { quote, request };
@@ -51,7 +73,11 @@ export async function GET(_request: Request, context: RouteContext) {
 
     const { quote, request } = result;
 
-    if (quote.status === "sent" && quote.expiresAt && quote.expiresAt <= new Date()) {
+    if (
+      quote.status === "sent" &&
+      quote.expiresAt &&
+      quote.expiresAt <= new Date()
+    ) {
       quote.status = "expired";
       await quote.save();
     }
@@ -66,19 +92,21 @@ export async function GET(_request: Request, context: RouteContext) {
         id: quote._id.toString(),
         quoteNumber: quote.quoteNumber,
         requestReference: request.reference,
-        items: quote.items.map((item: {
-          _id: Types.ObjectId;
-          description: string;
-          quantity: number;
-          unitPriceKobo: number;
-          totalKobo: number;
-        }) => ({
-          id: item._id.toString(),
-          description: item.description,
-          quantity: item.quantity,
-          unitPriceKobo: item.unitPriceKobo,
-          totalKobo: item.totalKobo,
-        })),
+        items: quote.items.map(
+          (item: {
+            _id: Types.ObjectId;
+            description: string;
+            quantity: number;
+            unitPriceKobo: number;
+            totalKobo: number;
+          }) => ({
+            id: item._id.toString(),
+            description: item.description,
+            quantity: item.quantity,
+            unitPriceKobo: item.unitPriceKobo,
+            totalKobo: item.totalKobo,
+          }),
+        ),
         subtotalKobo: quote.subtotalKobo,
         discountKobo: quote.discountKobo,
         totalKobo: quote.totalKobo,
@@ -91,7 +119,11 @@ export async function GET(_request: Request, context: RouteContext) {
         services: request.requestedServices.map(
           (service: { name: string }) => service.name,
         ),
-        address: [request.address.addressLine1, request.address.area, request.address.city]
+        address: [
+          request.address.addressLine1,
+          request.address.area,
+          request.address.city,
+        ]
           .filter(Boolean)
           .join(", "),
         preferredDate: request.preferredDate?.toISOString(),
@@ -109,7 +141,10 @@ export async function GET(_request: Request, context: RouteContext) {
     });
   } catch (error) {
     console.error("GET customer quote failed:", error);
-    return NextResponse.json({ message: "Unable to load quote." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Unable to load quote." },
+      { status: 500 },
+    );
   }
 }
 
@@ -125,17 +160,26 @@ export async function PATCH(request: Request, context: RouteContext) {
     const now = new Date();
 
     if (body.action !== "accept" && body.action !== "decline") {
-      return NextResponse.json({ message: "Invalid quote action." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid quote action." },
+        { status: 400 },
+      );
     }
 
     if (result.quote.status !== "sent") {
-      return NextResponse.json({ message: "This quote can no longer be changed." }, { status: 409 });
+      return NextResponse.json(
+        { message: "This quote can no longer be changed." },
+        { status: 409 },
+      );
     }
 
     if (result.quote.expiresAt && result.quote.expiresAt <= now) {
       result.quote.status = "expired";
       await result.quote.save();
-      return NextResponse.json({ message: "This quote has expired." }, { status: 409 });
+      return NextResponse.json(
+        { message: "This quote has expired." },
+        { status: 409 },
+      );
     }
 
     result.quote.status = body.action === "accept" ? "accepted" : "declined";
@@ -159,6 +203,9 @@ export async function PATCH(request: Request, context: RouteContext) {
     });
   } catch (error) {
     console.error("PATCH customer quote failed:", error);
-    return NextResponse.json({ message: "Unable to update quote." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Unable to update quote." },
+      { status: 500 },
+    );
   }
 }

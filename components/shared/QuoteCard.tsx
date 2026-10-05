@@ -14,12 +14,12 @@ import { Avatar } from "@/components/kit/Misc";
 import { Money } from "@/components/kit/Misc";
 import { Button } from "@/components/kit/Button";
 import { bookingStatus, quoteStatus } from "@/lib/status";
-import { quoteTotals } from "@/lib/quote";
 import type {
   Booking,
   CleaningRequest,
-  Customer,
   Quote,
+  QuoteItem,
+  QuoteStatus,
   Staff,
 } from "@/lib/types";
 import { fmtDate, fmtLong, fmtTime, naira } from "@/lib/utils";
@@ -46,8 +46,8 @@ export function QuoteCard({
           {request?.requestedServices
             ?.map((service) => service.name)
             .join(", ")}{" "}
-          · <strong>{naira(total)}</strong> · valid until{" "}
-          {fmtDate(quote.validUntil)}
+          · <strong>{naira(quote.totalKobo ? quote.totalKobo / 100 : 100)}</strong> · valid until{" "}
+          {fmtDate(quote.updatedAt)}
         </p>
       </div>
       <Button href={`/dashboard/quotes/${quote.id}`}>
@@ -124,16 +124,40 @@ export function BookingCard({
   );
 }
 
+export type QuoteDocumentProps = {
+  quote: {
+    quoteNumber: string;
+    status: QuoteStatus;
+    createdAt: string;
+    expiresAt?: string;
+    subtotalKobo: number;
+    discountKobo: number;
+    taxRate: number;
+    taxKobo: number;
+    totalKobo: number;
+    items: QuoteItem[];
+    terms: string;
+  };
+  request?: {
+    id?: string;
+    reference?: string;
+    requestedServices?: { name: string }[];
+    location?: { address: string; city?: string };
+    preferred?: { date?: string; time?: string };
+  } | null;
+  customer?: {
+    name: string;
+    email?: string;
+    phone?: string;
+  } | null;
+};
+
 /** The quotation document itself. Used by the customer quote page and the admin preview. */
 export function QuoteDocument({
   quote,
   request,
   customer,
-}: {
-  quote: Quote;
-  request?: CleaningRequest;
-  customer?: Pick<Customer, "name" | "email" | "phone">;
-}) {
+}: QuoteDocumentProps) {
   const subtotal = quote.subtotalKobo / 100;
   const discount = quote.discountKobo / 100;
   const tax = quote.taxKobo / 100;
@@ -161,7 +185,7 @@ export function QuoteDocument({
             Issued {fmtDate(quote.createdAt)}
             <br />
             <span className="font-medium text-foreground">
-              Valid until {fmtDate(quote.expiresAt)}
+              Valid until {quote.expiresAt ? fmtDate(quote.expiresAt) : "N/A"}
             </span>
           </p>
         </div>
@@ -184,14 +208,16 @@ export function QuoteDocument({
             </p>
             <p className="mt-1 font-semibold text-foreground">
               {request.requestedServices
-                .map((service) => service.name)
+                ?.map((service) => service.name)
                 .join(", ")}
             </p>
-            <p className="text-sm text-muted-foreground">
-              {request.location.address}
-              {request.location.city ? `, ${request.location.city}` : ""}
-            </p>
-            {request.preferred.date && (
+            {request.location && (
+              <p className="text-sm text-muted-foreground">
+                {request.location.address}
+                {request.location.city ? `, ${request.location.city}` : ""}
+              </p>
+            )}
+            {request.preferred?.date && (
               <p className="text-sm text-muted-foreground">
                 Preferred: {fmtDate(request.preferred.date)}
                 {request.preferred.time ? `, ${request.preferred.time}` : ""}
@@ -213,19 +239,16 @@ export function QuoteDocument({
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableBody>
-              {quote.items.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="px-0 py-3 pr-4 whitespace-normal text-foreground/90 h-auto">
-                    {item.description}
-                  </TableCell>
-                  <TableCell className="px-0 py-3 pr-4 whitespace-normal text-foreground/90"></TableCell>
-                  <TableCell className="px-0 py-3 text-right ">
-                    {naira(item.totalKobo / 100)}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+            {quote.items.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell className="px-0 py-3 pr-4 whitespace-normal text-foreground/90 h-auto">
+                  {item.description}
+                </TableCell>
+                <TableCell className="px-0 py-3 text-right ">
+                  {naira(item.totalKobo ? item.totalKobo / 100 : item.amount ?? 0)}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
         <div className="ml-auto mt-5 max-w-xs space-y-2 border-t border-border pt-4">
@@ -252,7 +275,7 @@ export function QuoteDocument({
           {quote.terms
             .split("\n")
             .filter(Boolean)
-            .map((l) => (
+            .map((l: string) => (
               <li key={l}>{l}</li>
             ))}
         </ul>

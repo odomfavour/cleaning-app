@@ -78,7 +78,9 @@ export async function getAdminBookings(): Promise<AdminBooking[]> {
   return response.data.bookings;
 }
 
-export async function getAdminBooking(id: string): Promise<AdminBookingDetails> {
+export async function getAdminBooking(
+  id: string,
+): Promise<AdminBookingDetails> {
   const response = await apiClient.get<{ booking: AdminBookingDetails }>(
     `/admin/bookings/${encodeURIComponent(id)}`,
   );

@@ -56,7 +56,7 @@ export function QuoteReview({ reference }: QuoteReviewProps) {
       <Card>
         <CardContent className="py-10 text-center">
           <p className="text-sm text-muted-foreground">
-            We couldn't load your quote.
+            We couldn&apos;t load your quote.
           </p>
         </CardContent>
       </Card>
@@ -190,8 +190,8 @@ export function QuoteReview({ reference }: QuoteReviewProps) {
             <p className="font-medium">Decline this quote?</p>
 
             <p className="mt-1 text-sm text-muted-foreground">
-              You can contact our team if you'd like to discuss the quotation
-              before proceeding.
+              You can contact our team if you&apos;d like to discuss the
+              quotation before proceeding.
             </p>
 
             <div className="mt-4 flex gap-3">

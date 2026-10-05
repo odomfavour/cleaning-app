@@ -30,7 +30,14 @@ export type CustomerDashboardData = {
     date: string | null;
     time: string | null;
     location: string;
-    status: "confirmed" | "assigned" | "en_route" | "arrived" | "in_progress" | "completed" | "cancelled";
+    status:
+      | "confirmed"
+      | "assigned"
+      | "en_route"
+      | "arrived"
+      | "in_progress"
+      | "completed"
+      | "cancelled";
     amountKobo: number;
     staff: { id: string; name: string }[];
     reviewNeeded: boolean;
@@ -45,6 +52,8 @@ export type CustomerDashboardData = {
 };
 
 export async function getCustomerDashboard(): Promise<CustomerDashboardData> {
-  const response = await apiClient.get<CustomerDashboardData>("/customer/dashboard");
+  const response = await apiClient.get<CustomerDashboardData>(
+    "/customer/dashboard",
+  );
   return response.data;
 }

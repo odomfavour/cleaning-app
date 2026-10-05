@@ -14,15 +14,22 @@ export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
 
-    if (!user) return NextResponse.json({ message: "Login required." }, { status: 401 });
+    if (!user)
+      return NextResponse.json({ message: "Login required." }, { status: 401 });
     if (user.role !== "customer") {
-      return NextResponse.json({ message: "Customer access required." }, { status: 403 });
+      return NextResponse.json(
+        { message: "Customer access required." },
+        { status: 403 },
+      );
     }
 
     const parsed = passwordSchema.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json(
-        { message: "Use at least 8 characters, including an uppercase letter and a number." },
+        {
+          message:
+            "Use at least 8 characters, including an uppercase letter and a number.",
+        },
         { status: 400 },
       );
     }
@@ -38,7 +45,10 @@ export async function POST(request: Request) {
     const account = await User.findById(user.id).select("+passwordHash");
 
     if (!account?.passwordHash) {
-      return NextResponse.json({ message: "Account not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Account not found." },
+        { status: 404 },
+      );
     }
 
     const validCurrentPassword = await verifyPassword(
@@ -47,7 +57,10 @@ export async function POST(request: Request) {
     );
 
     if (!validCurrentPassword) {
-      return NextResponse.json({ message: "Your current password is incorrect." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Your current password is incorrect." },
+        { status: 400 },
+      );
     }
 
     account.passwordHash = await hashPassword(parsed.data.newPassword);
@@ -56,6 +69,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ updated: true });
   } catch (error) {
     console.error("POST /api/customer/profile/password failed:", error);
-    return NextResponse.json({ message: "Unable to update your password." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Unable to update your password." },
+      { status: 500 },
+    );
   }
 }

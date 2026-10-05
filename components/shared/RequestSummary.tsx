@@ -2,26 +2,48 @@ import { MapPin, CalendarClock } from "lucide-react";
 import { Card, CardBody, CardHeader, DetailList } from "@/components/kit/Card";
 import { Badge } from "@/components/kit/Badge";
 import { PhotoGrid } from "@/components/kit/FileUploader";
-import { environmentLabel } from "@/lib/status";
-import type { CleaningRequest } from "@/lib/types";
 import { fmtLong, fmtTime } from "@/lib/utils";
 import { AdminRequestDetail } from "@/lib/api/services/admin-cleaning-requests.service";
+
+type PropertyItem = {
+  label: string;
+  value: string;
+};
 
 const propLabels: Record<string, string> = {
   bedrooms: "Bedrooms",
   bathrooms: "Bathrooms",
   livingRooms: "Living rooms",
   floors: "Floors",
-  kitchen: "Kitchens",
-  size: "Approx. size",
+  kitchen: "Kitchen",
   rooms: "Rooms",
+  size: "Approx. size",
   additional: "Additional areas",
 };
-export const propertyItems = (p: CleaningRequest["property"]) =>
-  Object.entries(p)
-    .filter(([, v]) => v !== "" && v !== undefined)
-    .map(([k, v]) => ({ label: propLabels[k] ?? k, value: String(v) }));
 
+export const propertyItems = (
+  p:
+    | {
+        bedrooms?: string;
+        bathrooms?: string;
+        livingRooms?: string;
+        floors?: string;
+        kitchen?: string;
+        rooms?: string;
+        size?: string;
+        additional?: string;
+      }
+    | undefined,
+): PropertyItem[] => {
+  if (!p) return [];
+
+  return Object.entries(p)
+    .filter(([, value]) => value !== undefined && value !== "")
+    .map(([key, value]) => ({
+      label: propLabels[key] ?? key,
+      value: String(value),
+    }));
+};
 type RequestSummaryProps = {
   r: AdminRequestDetail["request"];
   bare?: boolean;
@@ -51,30 +73,38 @@ function Block({
 
 /** Read-only view of everything the customer submitted. Shared by customer, admin and wizard review. */
 export function RequestSummary({ r, bare = false }: RequestSummaryProps) {
-  const propertyItems = [
-    r.bedrooms !== undefined ? { label: "Bedrooms", value: r.bedrooms } : null,
+  const summaryPropertyItems = [
+    r.bedrooms !== undefined
+      ? { label: "Bedrooms", value: String(r.bedrooms) }
+      : null,
+
     r.bathrooms !== undefined
-      ? { label: "Bathrooms", value: r.bathrooms }
+      ? { label: "Bathrooms", value: String(r.bathrooms) }
       : null,
+
     r.propertyDetails.rooms !== undefined
-      ? { label: "Rooms", value: r.propertyDetails.rooms }
+      ? { label: "Rooms", value: String(r.propertyDetails.rooms) }
       : null,
+
     r.propertyDetails.livingRooms !== undefined
       ? {
           label: "Living rooms",
-          value: r.propertyDetails.livingRooms,
+          value: String(r.propertyDetails.livingRooms),
         }
       : null,
+
     r.propertyDetails.floors !== undefined
-      ? { label: "Floors", value: r.propertyDetails.floors }
+      ? { label: "Floors", value: String(r.propertyDetails.floors) }
       : null,
+
     r.propertyDetails.kitchens !== undefined
-      ? { label: "Kitchens", value: r.propertyDetails.kitchens }
+      ? { label: "Kitchens", value: String(r.propertyDetails.kitchens) }
       : null,
+
     r.propertyDetails.size
-      ? { label: "Size", value: r.propertyDetails.size }
+      ? { label: "Size", value: String(r.propertyDetails.size) }
       : null,
-  ].filter(Boolean) as { label: string; value: string | number }[];
+  ].filter(Boolean) as { label: string; value: string }[];
 
   return (
     <div className={bare ? "" : "space-y-5"}>
@@ -93,8 +123,8 @@ export function RequestSummary({ r, bare = false }: RequestSummaryProps) {
       </Block>
 
       <Block bare={bare} title="Property details">
-        {propertyItems.length ? (
-          <DetailList cols={3} items={propertyItems} />
+        {summaryPropertyItems.length ? (
+          <DetailList cols={3} items={summaryPropertyItems} />
         ) : (
           <p className="text-sm text-muted-foreground">
             No property details provided.

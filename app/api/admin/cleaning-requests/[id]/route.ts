@@ -68,10 +68,15 @@ export async function GET(_request: Request, context: RouteContext) {
 
         status: request.status,
 
-        requestedServices: request.requestedServices.map((service) => ({
-          serviceId: service.serviceId.toString(),
-          name: service.name,
-        })),
+        requestedServices: request.requestedServices.map(
+          (service: {
+            serviceId: { toString(): string };
+            name: string;
+          }) => ({
+            serviceId: service.serviceId.toString(),
+            name: service.name,
+          }),
+        ),
 
         address: request.address,
 

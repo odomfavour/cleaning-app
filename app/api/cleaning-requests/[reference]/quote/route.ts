@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { Booking, CleaningRequest, Quote } from "@/server/models";
+import { CleaningRequest, Quote } from "@/server/models";
 import {
   REQUEST_ACCESS_COOKIE_NAME,
   verifyRequestAccessToken,
@@ -97,13 +97,21 @@ export async function GET(request: Request, context: RouteContext) {
         quoteNumber: quote.quoteNumber,
         requestReference: cleaningRequest.reference,
 
-        items: quote.items.map((item) => ({
-          id: item._id.toString(),
-          description: item.description,
-          quantity: item.quantity,
-          unitPriceKobo: item.unitPriceKobo,
-          totalKobo: item.totalKobo,
-        })),
+        items: quote.items.map(
+          (item: {
+            _id: { toString(): string };
+            description: string;
+            quantity: number;
+            unitPriceKobo: number;
+            totalKobo: number;
+          }) => ({
+            id: item._id.toString(),
+            description: item.description,
+            quantity: item.quantity,
+            unitPriceKobo: item.unitPriceKobo,
+            totalKobo: item.totalKobo,
+          }),
+        ),
 
         subtotalKobo: quote.subtotalKobo,
         discountKobo: quote.discountKobo,

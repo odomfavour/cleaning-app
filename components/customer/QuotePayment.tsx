@@ -106,7 +106,9 @@ export function QuotePayment({ reference, amountKobo }: QuotePaymentProps) {
             <span className="text-sm text-muted-foreground">
               Booking number
             </span>
-            <span className="font-medium">{confirmedBooking.bookingNumber}</span>
+            <span className="font-medium">
+              {confirmedBooking.bookingNumber}
+            </span>
           </div>
 
           <div className="flex justify-between gap-4">

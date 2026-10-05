@@ -1,22 +1,51 @@
 "use client";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { api } from "@/lib/api";
 import { useApi } from "@/lib/hooks";
 import { PageSkeleton } from "@/components/kit/Page";
+import { getPublicRequestStatus } from "@/lib/api/services/cleaning-request-tracking.service";
 import { VerifyAccess } from "./VerifyAccess";
 
-/** Renders children only if this browser has a session for `customerId`; otherwise asks the guest to verify or sign in. */
-export function AccessGate({ customerId, reference, title, intro, onGranted, children }: { customerId: string; reference: string; title?: string; intro?: string; onGranted?: () => void; children?: React.ReactNode }) {
+/** Renders children once verified; otherwise asks the guest to verify or sign in. */
+export function AccessGate({
+  reference,
+  title,
+  intro,
+  onGranted,
+  children,
+}: {
+  customerId?: string;
+  reference: string;
+  title?: string;
+  intro?: string;
+  onGranted?: () => void;
+  children?: React.ReactNode;
+}) {
   const path = usePathname();
-  const [, bump] = useState(0);
-  const allowed = api.session.canAccess(customerId);
-  const { data } = useApi(() => (allowed ? Promise.resolve(null) : api.access.getPublicStatus(reference)), [allowed, reference]);
-  if (allowed) return <>{children}</>;
+  const [verified, setVerified] = useState(false);
+  const { data } = useApi(
+    () => (verified ? Promise.resolve(null) : getPublicRequestStatus(reference)),
+    [verified, reference],
+  );
+
+  if (verified) return <>{children}</>;
   if (!data) return <PageSkeleton />;
+
   return (
     <div className="py-4">
-      <VerifyAccess reference={reference} maskedEmail={data.maskedEmail} maskedPhone={data.maskedPhone} onVerified={() => { bump((n) => n + 1); onGranted?.(); }} title={title ?? "Verify to continue"} intro={intro} nextHref={path} />
+      <VerifyAccess
+        reference={reference}
+        maskedEmail={data.maskedEmail}
+        maskedPhone={data.maskedPhone}
+        onVerified={() => {
+          setVerified(true);
+          onGranted?.();
+        }}
+        title={title ?? "Verify to continue"}
+        intro={intro}
+        nextHref={path}
+      />
     </div>
   );
 }
+

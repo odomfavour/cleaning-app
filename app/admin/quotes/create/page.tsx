@@ -6,9 +6,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { useAdminData } from "@/lib/useAdminData";
-import { api } from "@/lib/api";
-import { TERMS, TODAY } from "@/lib/mock/seed";
 import { PageHeader, PageSkeleton, ErrorState } from "@/components/kit/Page";
 import { Button } from "@/components/kit/Button";
 import { Card, CardBody, CardHeader } from "@/components/kit/Card";
@@ -16,11 +13,16 @@ import { Button as UiButton } from "@/components/ui/button";
 import { DateField, Input, Select, Textarea } from "@/components/kit/Field";
 import { Money } from "@/components/kit/Misc";
 import { ConfirmDialog } from "@/components/kit/Dialog";
-import { RequestSummary } from "@/components/shared/RequestSummary";
-import { quoteTotals } from "@/lib/quote";
 import { naira } from "@/lib/utils";
+import { getApiErrorMessage } from "@/lib/api/errors";
 import { useCreateQuote } from "@/lib/hooks/mutations/use-quotes";
-import { useAdminCleaningRequest } from "@/lib/hooks/queries/use-admin-cleaning-requests";
+import {
+  useAdminCleaningRequest,
+  useAdminCleaningRequests,
+} from "@/lib/hooks/queries/use-admin-cleaning-requests";
+
+const TODAY = new Date().toISOString().slice(0, 10);
+const DEFAULT_TERMS = "Payment in full is required to confirm your booking. This quote covers only the services and scope listed above.";
 
 const schema = z.object({
   requestId: z.string().min(1, "Select the request this quote is for"),
@@ -55,17 +57,14 @@ function Builder() {
   const router = useRouter();
   const requestId = useSearchParams().get("request") ?? "";
   const {
-    data: requestData,
-    isLoading,
-    error,
-  } = useAdminCleaningRequest(requestId);
-
-  console.log("requestData", requestData);
-  const { d, L, loading, reload } = useAdminData();
+    data: requests = [],
+    isLoading: requestsLoading,
+    error: requestsError,
+    refetch: refetchRequests,
+  } = useAdminCleaningRequests();
 
   const createQuoteMutation = useCreateQuote();
   const [confirm, setConfirm] = useState(false);
-  const [sending, setSending] = useState(false);
   const f = useForm<In, unknown, Out>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -74,7 +73,7 @@ function Builder() {
       discount: 0,
       taxRate: 0,
       validUntil: plusDays(7),
-      terms: TERMS,
+      terms: DEFAULT_TERMS,
     },
   });
   const { fields, append, remove, replace } = useFieldArray({
@@ -83,6 +82,12 @@ function Builder() {
   });
   const w = useWatch({ control: f.control });
   const rid = w.requestId ?? "";
+  const {
+    data: requestData,
+    isLoading: requestLoading,
+    error: requestError,
+    refetch: refetchRequest,
+  } = useAdminCleaningRequest(rid);
 
   useEffect(() => {
     const services = requestData?.request.requestedServices;
@@ -101,19 +106,16 @@ function Builder() {
     );
   }, [requestData, replace, f]);
 
-  if (loading && !d) return <PageSkeleton />;
-  if (error || !d)
-    return <ErrorState message={error ?? undefined} onRetry={reload} />;
-  const req = L.request(rid);
-  const t = quoteTotals({
-    items: (w.items ?? []).map((i, n) => ({
-      id: String(n),
-      description: "",
-      amount: Number(i?.amount) || 0,
-    })),
-    discount: Number(w.discount) || 0,
-    taxRate: Number(w.taxRate) || 0,
-  });
+  if (requestsLoading || (rid && requestLoading)) return <PageSkeleton />;
+  if (requestsError || requestError) {
+    const error = requestsError ?? requestError;
+    return <ErrorState message={getApiErrorMessage(error)} onRetry={() => void (requestsError ? refetchRequests() : refetchRequest())} />;
+  }
+  const req = requestData?.request;
+  const subtotal = (w.items ?? []).reduce((sum, item) => sum + (Number(item?.amount) || 0), 0);
+  const discount = Math.min(Number(w.discount) || 0, subtotal);
+  const tax = Math.round(((subtotal - discount) * (Number(w.taxRate) || 0)) / 100);
+  const t = { subtotal, discount, tax, total: subtotal - discount + tax };
 
   const send = f.handleSubmit(
     async (v) => {
@@ -165,8 +167,21 @@ function Builder() {
           <Card>
             <CardHeader title="Request" />
             <CardBody>
+              <Select
+                label="Cleaning request"
+                placeholder="Choose a request"
+                value={rid}
+                options={requests
+                  .filter((request) => ["submitted", "reviewing", "inspection_required"].includes(request.status))
+                  .map((request) => ({
+                    value: request.id,
+                    label: `${request.reference} · ${request.customer.name}`,
+                  }))}
+                error={e.requestId?.message}
+                {...f.register("requestId")}
+              />
               {requestData ? (
-                <div className="flex items-center justify-between gap-4">
+                <div className="mt-4 flex items-center justify-between gap-4">
                   <div className="min-w-0">
                     <p className="font-medium">
                       {requestData.request.reference}
@@ -344,7 +359,11 @@ function Builder() {
             <Card>
               <CardHeader title="Request details" />
               <CardBody>
-                <RequestSummary bare r={req} />
+                <p className="font-semibold">{req.requestedServices.map((service) => service.name).join(", ")}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {[req.address.addressLine1, req.address.area, req.address.city, req.address.state].filter(Boolean).join(", ")}
+                </p>
+                {req.notes && <p className="mt-3 whitespace-pre-line text-sm text-foreground/80">{req.notes}</p>}
               </CardBody>
             </Card>
           )}
@@ -356,9 +375,7 @@ function Builder() {
         onConfirm={send}
         loading={createQuoteMutation.isPending}
         title="Send this quote?"
-        description={`${naira(t.total)} will be sent to ${
-          req ? L.customer(req.customerId)?.name : "the customer"
-        }. They can accept or decline from their dashboard.`}
+        description={`${naira(t.total)} will be sent to ${requestData?.customer.name ?? "the customer"}. They can accept or decline from their dashboard.`}
         confirmLabel="Send quote"
       />
     </>

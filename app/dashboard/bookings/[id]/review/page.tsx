@@ -19,7 +19,13 @@ import {
 } from "@/lib/api/services/customer-booking.service";
 import { fmtDate } from "@/lib/utils";
 
-const prompts = ["Very poor", "Could be better", "Good", "Very good", "Excellent"];
+const prompts = [
+  "Very poor",
+  "Could be better",
+  "Good",
+  "Very good",
+  "Excellent",
+];
 const bookingKey = (id: string) => ["customer-booking", id] as const;
 
 export default function ReviewPage() {
@@ -36,11 +42,12 @@ export default function ReviewPage() {
     enabled: !!id,
   });
   const reviewMutation = useMutation({
-    mutationFn: () => submitCustomerBookingReview(id, {
-      rating,
-      comment,
-      photos: photos.map((photo) => photo.url),
-    }),
+    mutationFn: () =>
+      submitCustomerBookingReview(id, {
+        rating,
+        comment,
+        photos: photos.map((photo) => photo.url),
+      }),
     onSuccess: async () => {
       setDone(true);
       await queryClient.invalidateQueries({ queryKey: bookingKey(id) });
@@ -68,14 +75,20 @@ export default function ReviewPage() {
           <CheckCircle2 className="size-10" />
         </div>
         <h1 className="text-3xl font-bold text-primary">
-          {done ? "Thank you for your review" : "You’ve already reviewed this job"}
+          {done
+            ? "Thank you for your review"
+            : "You’ve already reviewed this job"}
         </h1>
         <p className="mt-2 text-muted-foreground">
           Your feedback helps us recognise great work and improve where we can.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Button href="/dashboard/request-cleaning" size="lg">Request another cleaning</Button>
-          <Button href="/dashboard" variant="secondary" size="lg">Back to dashboard</Button>
+          <Button href="/dashboard/request-cleaning" size="lg">
+            Request another cleaning
+          </Button>
+          <Button href="/dashboard" variant="secondary" size="lg">
+            Back to dashboard
+          </Button>
         </div>
       </div>
     );
@@ -101,13 +114,20 @@ export default function ReviewPage() {
       <Card>
         <CardBody className="space-y-6">
           <div className="text-center">
-            <p className="mb-1 text-sm font-medium text-foreground">Overall rating</p>
+            <p className="mb-1 text-sm font-medium text-foreground">
+              Overall rating
+            </p>
             <Stars value={rating} onChange={setRating} size={36} />
-            <p className="mt-1 h-5 text-sm text-muted-foreground" aria-live="polite">
+            <p
+              className="mt-1 h-5 text-sm text-muted-foreground"
+              aria-live="polite"
+            >
               {rating ? prompts[rating - 1] : ""}
             </p>
             {touched && !rating && (
-              <p role="alert" className="text-sm text-destructive">Select a star rating to continue.</p>
+              <p role="alert" className="text-sm text-destructive">
+                Select a star rating to continue.
+              </p>
             )}
           </div>
           <Textarea
@@ -118,7 +138,13 @@ export default function ReviewPage() {
             maxLength={5000}
             hint={`${comment.length}/5000`}
           />
-          <FileUploader label="Add photos (optional)" value={photos} onChange={setPhotos} max={4} compact />
+          <FileUploader
+            label="Add photos (optional)"
+            value={photos}
+            onChange={setPhotos}
+            max={4}
+            compact
+          />
           <Button
             size="lg"
             full

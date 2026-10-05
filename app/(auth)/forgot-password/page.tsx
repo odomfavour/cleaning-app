@@ -8,7 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/kit/Button";
 import { Input } from "@/components/kit/Field";
-import { api } from "@/lib/api";
+import { forgotPassword } from "@/lib/api/services/auth.service";
 
 const schema = z.object({ email: z.string().min(1, "Enter your email address").email("Enter a valid email address") });
 type Values = z.infer<typeof schema>;
@@ -16,7 +16,7 @@ type Values = z.infer<typeof schema>;
 export default function ForgotPasswordPage() {
   const [sentTo, setSentTo] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Values>({ resolver: zodResolver(schema) });
-  const onSubmit = async (v: Values) => { await api.auth.forgotPassword(v.email); setSentTo(v.email); };
+  const onSubmit = async (v: Values) => { await forgotPassword(v.email); setSentTo(v.email); };
 
   if (sentTo) return (
     <div className="animate-pop-in text-center" role="status">

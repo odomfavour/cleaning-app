@@ -22,8 +22,13 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api/errors";
+import { getCustomerProfile } from "@/lib/api/services/customer-profile.service";
+import {
+  getCustomerRequests,
+  getCustomerRequest,
+  type CustomerRequestSummary,
+} from "@/lib/api/services/cleaning-request.service";
 import { useApi } from "@/lib/hooks";
 import { useRegisterCustomer } from "@/lib/hooks/queries/use-auth";
 import { saveSubmission } from "@/lib/submission";
@@ -49,7 +54,7 @@ import {
 import { Skeleton } from "@/components/kit/Page";
 import { propertyItems } from "@/components/shared/RequestSummary";
 import { environmentLabel } from "@/lib/status";
-import type { CleaningRequest, Environment } from "@/lib/types";
+import type { Environment } from "@/lib/types";
 import { cn, fmtLong, fmtTime } from "@/lib/utils";
 import {
   ENVIRONMENTS,
@@ -120,20 +125,20 @@ export function RequestForm({ mode }: { mode: FormMode }) {
   const [registeredAccount, setRegisteredAccount] = useState(false);
   const top = useRef<HTMLDivElement>(null);
   const prefilled = useRef(false);
-  const { data: services = [], isLoading, isError, refetch } = useServices();
+  const { data: services = [] } = useServices();
   const createRequest = useCreateCleaningRequest();
   const registerCustomer = useRegisterCustomer();
 
   const { data: me } = useApi(
-    () => (account ? api.customers.me() : Promise.resolve(null)),
-    [mode],
+    () => (account ? getCustomerProfile() : Promise.resolve(null)),
+    [mode, account],
   );
   const { data: previous } = useApi(
     () =>
       account
-        ? api.requests.getAll({ customerId: api.session.customerId })
-        : Promise.resolve([] as CleaningRequest[]),
-    [mode],
+        ? getCustomerRequests()
+        : Promise.resolve([] as CustomerRequestSummary[]),
+    [mode, account],
   );
   const f = useForm<WizardValues>({
     resolver: zodResolver(wizardSchema),
@@ -184,42 +189,50 @@ export function RequestForm({ mode }: { mode: FormMode }) {
       setStep((s) => Math.min(s + 1, STEPS.length - 1));
   };
 
-  const reuse = (id: string) => {
-    const r = previous?.find((x) => x.id === id);
-    if (!r) return;
-    const p = r.property;
-    setValue("environment", r.environment, { shouldValidate: true });
-    setValue(
-      "services",
-      r.services
-        .map((n) => services?.find((s) => s.name === n)?.id)
-        .filter(Boolean) as string[],
-    );
-    (
-      [
-        "bedrooms",
-        "bathrooms",
-        "livingRooms",
-        "floors",
-        "rooms",
-        "additional",
-      ] as const
-    ).forEach((k) => setValue(k, str(p[k])));
-    setValue("kitchens", str(p.kitchen));
-    setValue(
-      "size",
-      isResidential(r.environment)
-        ? str(p.size)
-        : str(p.size).replace(/\D/g, ""),
-    );
-    setValue("address", r.location.address);
-    setValue("area", r.location.area);
-    setValue("city", r.location.city);
-    setValue("landmark", r.location.landmark);
-    setValue("directions", r.location.directions);
-    toast.success(
-      `Details copied from ${r.id}. Review each step before submitting.`,
-    );
+  const reuse = async (reference: string) => {
+    try {
+      const detail = await getCustomerRequest(reference);
+      if (!detail?.request) return;
+      const r = detail.request;
+      const p = r.propertyDetails || {};
+      if (r.propertyType) {
+        setValue("environment", r.propertyType as WizardValues["environment"], {
+          shouldValidate: true,
+        });
+      }
+      if (r.requestedServices?.length) {
+        setValue(
+          "services",
+          r.requestedServices.map((service) => service.serviceId),
+        );
+      }
+      setValue("bedrooms", str(r.bedrooms));
+      setValue("bathrooms", str(r.bathrooms));
+      setValue("livingRooms", str(p.livingRooms));
+      setValue("floors", str(p.floors));
+      setValue("rooms", str(p.rooms));
+      setValue("additional", str(p.additional));
+      setValue("kitchens", str(p.kitchens));
+      setValue(
+        "size",
+        isResidential(r.propertyType as Environment | undefined)
+          ? str(p.size)
+          : str(p.size).replace(/\D/g, ""),
+      );
+      if (r.address) {
+        setValue("address", r.address.addressLine1 || "");
+        setValue("area", r.address.area || "");
+        setValue("city", r.address.city || "");
+        setValue("state", r.address.state || "Rivers State");
+        setValue("landmark", r.address.landmark || "");
+        setValue("directions", r.address.directions || "");
+      }
+      toast.success(
+        `Details copied from ${r.reference}. Review each step before submitting.`,
+      );
+    } catch {
+      toast.error("Unable to load request details to reuse.");
+    }
   };
 
   const buildRequest = (x: WizardValues) => {
@@ -379,7 +392,10 @@ export function RequestForm({ mode }: { mode: FormMode }) {
           : `/request-cleaning/success?ref=${request.reference}`,
       );
     } catch (error) {
-      toast.error(getApiErrorMessage(error) || "We couldn't submit your request. Please try again.");
+      toast.error(
+        getApiErrorMessage(error) ||
+          "We couldn't submit your request. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -480,8 +496,8 @@ export function RequestForm({ mode }: { mode: FormMode }) {
                       placeholder="Choose a request to copy details from (optional)"
                       onChange={(e) => e.target.value && reuse(e.target.value)}
                       options={previous.map((r) => ({
-                        value: r.id,
-                        label: `${r.id}: ${r.services.join(", ")} (${environmentLabel[r.environment]})`,
+                        value: r.reference,
+                        label: `${r.reference}: ${r.services.join(", ")} (${environmentLabel[r.environment] ?? r.environment})`,
                       }))}
                     />
                   </div>
@@ -734,13 +750,13 @@ export function RequestForm({ mode }: { mode: FormMode }) {
                 title="Where should we clean?"
                 desc="We'll use this to plan travel and confirm that we cover your area."
               >
-                {account && !!me?.addresses.length && (
+                {account && Boolean(me?.addresses?.length) && (
                   <div className="mb-5">
                     <p className="mb-2 text-sm font-medium text-foreground">
                       Use a saved address
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {me.addresses.map((a) => (
+                      {me?.addresses?.map((a) => (
                         <UiButton
                           key={a.id}
                           type="button"
@@ -952,7 +968,8 @@ export function RequestForm({ mode }: { mode: FormMode }) {
                             Create an account instead of checking out as a guest
                           </span>
                           <span className="mt-1 block text-sm text-muted-foreground">
-                            Save this request to your account and manage quotes and bookings after signing in.
+                            Save this request to your account and manage quotes
+                            and bookings after signing in.
                           </span>
                         </>
                       }
@@ -978,7 +995,9 @@ export function RequestForm({ mode }: { mode: FormMode }) {
                     )}
                     {!v.createAccount && (
                       <p className="text-sm text-muted-foreground">
-                        You can continue as a guest. We&apos;ll notify you when your quote is ready, and you can verify your email or phone to view it.
+                        You can continue as a guest. We&apos;ll notify you when
+                        your quote is ready, and you can verify your email or
+                        phone to view it.
                       </p>
                     )}
                   </div>
@@ -1018,7 +1037,7 @@ export function RequestForm({ mode }: { mode: FormMode }) {
                   <Review title="Property details" onEdit={() => setStep(2)}>
                     <DetailList
                       cols={3}
-                      items={propertyItems(preview.property)}
+                      items={propertyItems(preview?.property)}
                     />
                   </Review>
                   <Review

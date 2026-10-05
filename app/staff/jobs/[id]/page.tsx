@@ -37,16 +37,41 @@ import { fmtDate, fmtTime } from "@/lib/utils";
 
 const jobKey = (id: string) => ["staff-booking", id] as const;
 
-const nextAction: Partial<Record<StaffDashboardJobStatus, {
-  to: "en_route" | "arrived" | "in_progress";
-  label: string;
-  icon: typeof Play;
-  toast: string;
-}>> = {
-  confirmed: { to: "en_route", label: "I’m on my way", icon: Navigation, toast: "Marked as en route" },
-  assigned: { to: "en_route", label: "I’m on my way", icon: Navigation, toast: "Marked as en route" },
-  en_route: { to: "arrived", label: "I’ve arrived", icon: MapPin, toast: "Marked as arrived" },
-  arrived: { to: "in_progress", label: "Start cleaning", icon: Play, toast: "Cleaning started" },
+const nextAction: Partial<
+  Record<
+    StaffDashboardJobStatus,
+    {
+      to: "en_route" | "arrived" | "in_progress";
+      label: string;
+      icon: typeof Play;
+      toast: string;
+    }
+  >
+> = {
+  confirmed: {
+    to: "en_route",
+    label: "I’m on my way",
+    icon: Navigation,
+    toast: "Marked as en route",
+  },
+  assigned: {
+    to: "en_route",
+    label: "I’m on my way",
+    icon: Navigation,
+    toast: "Marked as en route",
+  },
+  en_route: {
+    to: "arrived",
+    label: "I’ve arrived",
+    icon: MapPin,
+    toast: "Marked as arrived",
+  },
+  arrived: {
+    to: "in_progress",
+    label: "Start cleaning",
+    icon: Play,
+    toast: "Cleaning started",
+  },
 };
 
 function displayStatus(status: string) {
@@ -63,13 +88,16 @@ export default function StaffJobDetail() {
     enabled: !!id,
   });
   const updateMutation = useMutation({
-    mutationFn: (status: "en_route" | "arrived" | "in_progress" | "completed") =>
-      updateStaffBookingStatus(id, status),
+    mutationFn: (
+      status: "en_route" | "arrived" | "in_progress" | "completed",
+    ) => updateStaffBookingStatus(id, status),
     onSuccess: async (booking) => {
       queryClient.setQueryData(jobKey(id), booking);
       await queryClient.invalidateQueries({ queryKey: ["staff", "dashboard"] });
       setConfirmComplete(false);
-      toast.success(booking.status === "completed" ? "Job completed" : "Job status updated");
+      toast.success(
+        booking.status === "completed" ? "Job completed" : "Job status updated",
+      );
     },
     onError: (error) => toast.error(getApiErrorMessage(error)),
   });
@@ -92,8 +120,12 @@ export default function StaffJobDetail() {
 
   return (
     <>
-      <Link href="/staff/jobs" className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground">
-        <ChevronLeft className="size-4" />My jobs
+      <Link
+        href="/staff/jobs"
+        className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground"
+      >
+        <ChevronLeft className="size-4" />
+        My jobs
       </Link>
       <div className="mb-5 flex items-start justify-between gap-3">
         <div>
@@ -106,7 +138,10 @@ export default function StaffJobDetail() {
       {!cancelled && (
         <Card className="mb-4">
           <CardBody className="px-2 py-4">
-            <ProgressTracker steps={[...BOOKING_STEPS]} current={bookingStepIndex(job.status)} />
+            <ProgressTracker
+              steps={[...BOOKING_STEPS]}
+              current={bookingStepIndex(job.status)}
+            />
           </CardBody>
         </Card>
       )}
@@ -116,14 +151,20 @@ export default function StaffJobDetail() {
           <div className="flex gap-3">
             <Clock className="mt-0.5 size-5 shrink-0 text-blue-700" />
             <div>
-              <p className="font-medium text-foreground">{job.date ? fmtDate(job.date) : "Schedule pending"}</p>
-              <p className="text-sm text-muted-foreground">{fmtTime(job.time ?? undefined)}</p>
+              <p className="font-medium text-foreground">
+                {job.date ? fmtDate(job.date) : "Schedule pending"}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {fmtTime(job.time ?? undefined)}
+              </p>
             </div>
           </div>
           <div className="flex gap-3">
             <MapPin className="mt-0.5 size-5 shrink-0 text-blue-700" />
             <div className="min-w-0 flex-1">
-              <p className="text-foreground">{job.location || "Location unavailable"}</p>
+              <p className="text-foreground">
+                {job.location || "Location unavailable"}
+              </p>
               {job.location && (
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(job.location)}`}
@@ -141,11 +182,17 @@ export default function StaffJobDetail() {
               <Avatar name={job.customer.name} />
               <div className="min-w-0 flex-1">
                 <p className="text-xs text-muted-foreground">Customer</p>
-                <p className="truncate font-medium text-foreground">{job.customer.name}</p>
+                <p className="truncate font-medium text-foreground">
+                  {job.customer.name}
+                </p>
               </div>
               {job.customer.phone && (
-                <a href={`tel:${job.customer.phone}`} className="flex h-11 items-center gap-2 rounded-lg border border-border px-4 text-sm font-semibold text-primary">
-                  <Phone className="size-4" />Call
+                <a
+                  href={`tel:${job.customer.phone}`}
+                  className="flex h-11 items-center gap-2 rounded-lg border border-border px-4 text-sm font-semibold text-primary"
+                >
+                  <Phone className="size-4" />
+                  Call
                 </a>
               )}
             </div>
@@ -156,8 +203,12 @@ export default function StaffJobDetail() {
       {job.instructions && (
         <Card className="mb-4 border-amber-200 bg-amber-50/60">
           <CardBody>
-            <p className="text-xs font-semibold text-amber-800">Special instructions</p>
-            <p className="mt-1 text-[15px] text-foreground">{job.instructions}</p>
+            <p className="text-xs font-semibold text-amber-800">
+              Special instructions
+            </p>
+            <p className="mt-1 text-[15px] text-foreground">
+              {job.instructions}
+            </p>
           </CardBody>
         </Card>
       )}
@@ -169,7 +220,9 @@ export default function StaffJobDetail() {
             <li key={member.id} className="flex items-center gap-3 px-5 py-3">
               <Avatar name={member.name} size="sm" />
               <p className="flex-1 text-sm font-medium">{member.name}</p>
-              <span className="text-xs text-muted-foreground">{member.role}</span>
+              <span className="text-xs text-muted-foreground">
+                {member.role}
+              </span>
             </li>
           ))}
         </ul>
@@ -178,7 +231,9 @@ export default function StaffJobDetail() {
       {completed && (
         <Alert variant="success">
           <CheckCircle2 />
-          <AlertDescription className="text-emerald-800">This job is complete.</AlertDescription>
+          <AlertDescription className="text-emerald-800">
+            This job is complete.
+          </AlertDescription>
         </Alert>
       )}
       {cancelled && (
@@ -198,7 +253,8 @@ export default function StaffJobDetail() {
               loading={updateMutation.isPending}
               className="h-14 text-base"
             >
-              <ActionIcon className="size-5" />{action.label}
+              <ActionIcon className="size-5" />
+              {action.label}
             </Button>
           )}
           {job.status === "in_progress" && (
@@ -209,7 +265,8 @@ export default function StaffJobDetail() {
               onClick={() => setConfirmComplete(true)}
               className="h-14 text-base"
             >
-              <Sparkles className="size-5" />Complete cleaning
+              <Sparkles className="size-5" />
+              Complete cleaning
             </Button>
           )}
         </div>

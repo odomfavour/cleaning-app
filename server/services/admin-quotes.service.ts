@@ -1,10 +1,63 @@
 import { Types } from "mongoose";
-
-import { Customer } from "@/server/models/Customer";
 import { Quote } from "@/server/models/Quote";
-import mongoose from "mongoose";
 
-function serializeQuote(quote: any) {
+type PopulatedAdminQuote = {
+  _id: { toString(): string };
+  quoteNumber: string;
+  requestId?: {
+    _id: { toString(): string };
+    reference: string;
+    contactSnapshot?: { name?: string; email?: string; phone?: string };
+    requestedServices?: { serviceId: { toString(): string }; name: string }[];
+    propertyType?: string;
+    bedrooms?: number;
+    bathrooms?: number;
+    propertyDetails?: Record<string, unknown>;
+    notes?: string;
+    photos?: string[];
+    address?: {
+      addressLine1?: string;
+      city?: string;
+      area?: string;
+      landmark?: string;
+      directions?: string;
+    };
+    preferredDate?: Date;
+    preferredTimeSlot?: string;
+    schedule?: { alternativeDate?: Date; alternativeTimeSlot?: string; flexible?: boolean };
+    status: string;
+    createdAt?: Date;
+  } | null;
+  customerId?: {
+    _id: { toString(): string };
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+  } | null;
+  items: {
+    _id: { toString(): string };
+    description: string;
+    quantity: number;
+    unitPriceKobo: number;
+    totalKobo: number;
+  }[];
+  subtotalKobo: number;
+  discountKobo: number;
+  taxRate?: number;
+  taxKobo?: number;
+  totalKobo: number;
+  status: string;
+  sentAt?: Date;
+  expiresAt?: Date;
+  acceptedAt?: Date;
+  declinedAt?: Date;
+  terms: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+function serializeQuote(quote: PopulatedAdminQuote) {
   const request = quote.requestId;
   const customer = quote.customerId;
 
@@ -24,7 +77,7 @@ function serializeQuote(quote: any) {
           },
 
           requestedServices:
-            request.requestedServices?.map((service: any) => ({
+            request.requestedServices?.map((service) => ({
               serviceId: service.serviceId.toString(),
               name: service.name,
             })) ?? [],
@@ -86,7 +139,7 @@ function serializeQuote(quote: any) {
         }
       : null,
 
-    items: quote.items.map((item: any) => ({
+    items: quote.items.map((item) => ({
       id: item._id.toString(),
       description: item.description,
       quantity: item.quantity,

@@ -8,12 +8,12 @@ import { PageHeader, PageSkeleton, ErrorState, EmptyState } from "@/components/k
 import { Button } from "@/components/kit/Button";
 import { Card } from "@/components/kit/Card";
 import { SegmentedControl } from "@/components/kit/Tabs";
-import { TODAY } from "@/lib/mock/seed";
 import { cn, fmtTime } from "@/lib/utils";
 
 type View = "day" | "week" | "month";
 interface Ev { id: string; date: string; time: string; title: string; sub: string; href: string; kind: "job" | "inspection"; live?: boolean }
 
+const TODAY = new Date().toISOString().slice(0, 10);
 const D = (s: string) => new Date(s + "T00:00:00Z");
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 const add = (s: string, n: number) => { const d = D(s); d.setUTCDate(d.getUTCDate() + n); return iso(d); };

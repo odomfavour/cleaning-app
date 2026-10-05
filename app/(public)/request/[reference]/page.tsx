@@ -43,10 +43,10 @@ export default function TrackRequestPage() {
     refetch: reloadStatus,
   } = usePublicRequestStatus(ref);
 
-  const {
-    data: full,
-    isFetching: loadingFull,
-  } = useVerifiedRequest(ref, verified);
+  const { data: full, isFetching: loadingFull } = useVerifiedRequest(
+    ref,
+    verified,
+  );
 
   if (isLoading && status === undefined && !error) {
     return <PageSkeleton />;

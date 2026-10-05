@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { updateAdminBooking } from "@/lib/api/services/admin-booking.service";
 import { Dialog } from "@/components/kit/Dialog";
 import { CheckboxCard } from "@/components/kit/Choice";
 import { Button } from "@/components/kit/Button";
@@ -19,7 +19,19 @@ export function StaffAssignmentDialog({ open, onClose, onDone, booking, staff, a
   const clash = (s: Staff) => allBookings.some((b) => b.id !== booking.id && b.date === booking.date && b.staffIds.includes(s.id) && !["completed", "cancelled"].includes(b.status));
   const pool = staff.filter((s) => s.status === "active" && s.role !== "Inspector");
   const toggle = (id: string) => setSel((x) => (x.includes(id) ? x.filter((i) => i !== id) : [...x, id]));
-  const save = async () => { setBusy(true); await api.bookings.assignStaff(booking.id, sel); setBusy(false); toast.success(sel.length ? `${sel.length} staff assigned` : "Staff removed"); onDone(); onClose(); };
+  const save = async () => {
+    setBusy(true);
+    try {
+      await updateAdminBooking(booking.id, { staffIds: sel });
+      toast.success(sel.length ? `${sel.length} staff assigned` : "Staff removed");
+      onDone();
+      onClose();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to assign staff");
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
     <Dialog open={open} onClose={onClose} title="Assign staff" description="Select everyone who will work this job." size="md"
       footer={<><Button variant="secondary" onClick={onClose}>Cancel</Button><Button onClick={save} loading={busy}>Save ({sel.length} selected)</Button></>}>

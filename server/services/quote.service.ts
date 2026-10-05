@@ -159,13 +159,21 @@ export async function createAdminQuote(input: unknown) {
 
     customerId: quote.customerId.toString(),
 
-    items: quote.items.map((item) => ({
-      id: item._id.toString(),
-      description: item.description,
-      quantity: item.quantity,
-      unitPriceKobo: item.unitPriceKobo,
-      totalKobo: item.totalKobo,
-    })),
+    items: quote.items.map(
+      (item: {
+        _id: { toString(): string };
+        description: string;
+        quantity: number;
+        unitPriceKobo: number;
+        totalKobo: number;
+      }) => ({
+        id: item._id.toString(),
+        description: item.description,
+        quantity: item.quantity,
+        unitPriceKobo: item.unitPriceKobo,
+        totalKobo: item.totalKobo,
+      }),
+    ),
 
     subtotalKobo: quote.subtotalKobo,
 
