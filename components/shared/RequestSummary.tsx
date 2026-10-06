@@ -20,19 +20,19 @@ const propLabels: Record<string, string> = {
   size: "Approx. size",
   additional: "Additional areas",
 };
-
+// test 
 export const propertyItems = (
   p:
     | {
-        bedrooms?: string;
-        bathrooms?: string;
-        livingRooms?: string;
-        floors?: string;
-        kitchen?: string;
-        rooms?: string;
-        size?: string;
-        additional?: string;
-      }
+      bedrooms?: string;
+      bathrooms?: string;
+      livingRooms?: string;
+      floors?: string;
+      kitchen?: string;
+      rooms?: string;
+      size?: string;
+      additional?: string;
+    }
     | undefined,
 ): PropertyItem[] => {
   if (!p) return [];
@@ -88,9 +88,9 @@ export function RequestSummary({ r, bare = false }: RequestSummaryProps) {
 
     r.propertyDetails.livingRooms !== undefined
       ? {
-          label: "Living rooms",
-          value: String(r.propertyDetails.livingRooms),
-        }
+        label: "Living rooms",
+        value: String(r.propertyDetails.livingRooms),
+      }
       : null,
 
     r.propertyDetails.floors !== undefined
