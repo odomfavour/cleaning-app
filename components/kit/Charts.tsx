@@ -4,17 +4,30 @@ import { Progress } from "@/components/ui/progress";
 /** Lightweight dependency-free charts. Swap for recharts later if needed. */
 export function BarChart({ data, format = (n) => String(n), height = 180, color = "bg-primary" }: { data: { label: string; value: number }[]; format?: (n: number) => string; height?: number; color?: string }) {
   const max = Math.max(...data.map((d) => d.value), 1);
+  const manyBars = data.length > 5;
   return (
-    <div role="img" aria-label={data.map((d) => `${d.label}: ${format(d.value)}`).join(", ")}>
-      <div className="flex items-end gap-1.5 sm:gap-3" style={{ height }}>
+    <div role="img" aria-label={data.map((d) => `${d.label}: ${format(d.value)}`).join(", ")} className="w-full overflow-hidden">
+      <div className="flex items-end gap-1 sm:gap-2" style={{ height }}>
         {data.map((d) => (
-          <div key={d.label} className="group relative flex h-full flex-1 flex-col justify-end">
+          <div key={d.label} className="group relative flex h-full min-w-0 flex-1 flex-col justify-end">
             <span className="pointer-events-none absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">{format(d.value)}</span>
             <div className={cn("w-full rounded-t-md transition-all", color, "group-hover:opacity-80")} style={{ height: `${Math.max((d.value / max) * 100, 2)}%` }} />
           </div>
         ))}
       </div>
-      <div className="mt-2 flex gap-1.5 sm:gap-3">{data.map((d) => <span key={d.label} className="flex-1 truncate text-center text-[11px] text-muted-foreground sm:text-xs">{d.label}</span>)}</div>
+      <div className="mt-2 flex gap-1 sm:gap-2">
+        {data.map((d, i) => (
+          <span
+            key={d.label}
+            className={cn(
+              "flex-1 truncate text-center text-[10px] text-muted-foreground sm:text-[11px]",
+              manyBars && i % 2 !== 0 && "hidden sm:block",
+            )}
+          >
+            {d.label}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -53,14 +66,19 @@ export function LineChart({ data, height = 160, format = (n) => String(n) }: { d
   const max = Math.max(...data.map((d) => d.value), 1);
   const pts = data.map((d, i) => [P + (i / Math.max(data.length - 1, 1)) * (W - P * 2), H - P - (d.value / max) * (H - P * 2)]);
   const path = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+  const manyLabels = data.length > 5;
   return (
-    <div role="img" aria-label={data.map((d) => `${d.label}: ${format(d.value)}`).join(", ")}>
+    <div role="img" aria-label={data.map((d) => `${d.label}: ${format(d.value)}`).join(", ")} className="w-full overflow-hidden">
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" preserveAspectRatio="none" style={{ height }}>
         <path d={`${path} L${pts[pts.length - 1][0]},${H} L${pts[0][0]},${H} Z`} fill="rgb(37 99 235 / 0.08)" />
         <path d={path} fill="none" stroke="#2563eb" strokeWidth="2.5" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
         {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="3.5" fill="#fff" stroke="#2563eb" strokeWidth="2" vectorEffect="non-scaling-stroke" />)}
       </svg>
-      <div className="mt-2 flex justify-between text-[11px] text-muted-foreground sm:text-xs">{data.map((d) => <span key={d.label}>{d.label}</span>)}</div>
+      <div className="mt-2 flex justify-between text-[10px] text-muted-foreground sm:text-[11px]">
+        {data.map((d, i) => (
+          <span key={d.label} className={cn(manyLabels && i % 2 !== 0 && "hidden sm:block")}>{d.label}</span>
+        ))}
+      </div>
     </div>
   );
 }

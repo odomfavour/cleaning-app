@@ -83,7 +83,7 @@ export default function AdminDashboard() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
         <StatCard
           label="Requests today"
           value={stats.requestsToday}
@@ -111,21 +111,19 @@ export default function AdminDashboard() {
           icon={CheckCircle2}
           tone="green"
         />
-        <div className="col-span-2 lg:col-span-1">
-          <StatCard
-            label="Revenue (8 weeks)"
-            value={naira(stats.paidRevenueKobo / 100)}
-            icon={Banknote}
-            tone="green"
-            href="/admin/payments"
-          />
-        </div>
+        <StatCard
+          label="Revenue (8 weeks)"
+          value={naira(stats.paidRevenueKobo / 100)}
+          icon={Banknote}
+          tone="green"
+          href="/admin/payments"
+        />
       </div>
 
       {(newRequests.length > 0 || stats.unassignedBookings > 0) && (
         <div className="mt-6 grid gap-3 md:grid-cols-2">
           {newRequests.length > 0 && (
-            <Card className="flex items-center gap-3 border-violet-200 bg-violet-50/60 p-4">
+            <Card className="flex flex-col gap-3 border-violet-200 bg-violet-50/60 p-4 sm:flex-row sm:items-center">
               <p className="flex-1 text-sm text-foreground">
                 <strong>
                   {newRequests.length} new{" "}
@@ -133,13 +131,13 @@ export default function AdminDashboard() {
                   review.
                 </strong>
               </p>
-              <Button size="sm" href="/admin/requests">
+              <Button size="sm" href="/admin/requests" className="shrink-0">
                 Review
               </Button>
             </Card>
           )}
           {stats.unassignedBookings > 0 && (
-            <Card className="flex items-center gap-3 border-amber-200 bg-amber-50/60 p-4">
+            <Card className="flex flex-col gap-3 border-amber-200 bg-amber-50/60 p-4 sm:flex-row sm:items-center">
               <p className="flex-1 text-sm text-foreground">
                 <strong>
                   {stats.unassignedBookings} upcoming{" "}
@@ -151,6 +149,7 @@ export default function AdminDashboard() {
               </p>
               <Button
                 size="sm"
+                className="shrink-0"
                 href={
                   firstUnassigned
                     ? `/admin/bookings/${firstUnassigned.id}`
@@ -244,7 +243,7 @@ export default function AdminDashboard() {
                 <li key={request.id}>
                   <Link
                     href={`/admin/requests/${request.id}`}
-                    className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/40"
+                    className="flex flex-col gap-1.5 overflow-hidden px-5 py-3.5 hover:bg-muted/40 sm:flex-row sm:items-center sm:gap-3"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-foreground">
