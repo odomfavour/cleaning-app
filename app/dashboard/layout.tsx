@@ -20,13 +20,6 @@ const nav: NavItem[] = [
   { href: "/dashboard/bookings", label: "My bookings", icon: CalendarCheck },
   { href: "/dashboard/profile", label: "Profile", icon: User },
 ];
-const bottom: NavItem[] = [
-  nav[0],
-  nav[1],
-  { href: "/dashboard/request-cleaning", label: "New", icon: PlusCircle },
-  nav[2],
-  nav[3],
-];
 
 export default function CustomerLayout({
   children,
@@ -47,7 +40,6 @@ export default function CustomerLayout({
         },
         ...nav.slice(2),
       ]}
-      bottomNav={bottom}
       user={{ name: me?.name ?? "Your account", sub: me?.email ?? "" }}
       cta={{ href: "/dashboard/request-cleaning", label: "Request a cleaning" }}
     >

@@ -1,19 +1,19 @@
-import { Card as ShadcnCard, CardAction, CardContent, CardDescription, CardHeader as ShadcnCardHeader, CardTitle } from "@/components/ui/card";
+import { Card as ShadcnCard, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 export function Card({ className, ...p }: React.ComponentProps<"div">) {
-  return <ShadcnCard {...p} className={cn("gap-0 py-0 shadow-none", className)} />;
+  return <ShadcnCard {...p} className={cn("gap-0 overflow-hidden py-0 shadow-none", className)} />;
 }
 
 export function CardHeader({ title, description, action, className }: { title: React.ReactNode; description?: React.ReactNode; action?: React.ReactNode; className?: string }) {
   return (
-    <ShadcnCardHeader className={cn("border-b px-5 py-4 [.border-b]:pb-4", className)}>
-      <CardTitle className="text-base leading-normal text-primary">
-        <h2>{title}</h2>
-      </CardTitle>
-      {description && <CardDescription className="mt-0.5">{description}</CardDescription>}
-      {action && <CardAction>{action}</CardAction>}
-    </ShadcnCardHeader>
+    <div className={cn("flex min-w-0 items-start justify-between gap-3 border-b px-5 py-4", className)}>
+      <div className="min-w-0 flex-1">
+        <h2 className="text-base font-semibold leading-normal text-primary">{title}</h2>
+        {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
+      </div>
+      {action && <div className="shrink-0">{action}</div>}
+    </div>
   );
 }
 

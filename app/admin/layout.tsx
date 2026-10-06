@@ -44,7 +44,6 @@ export default function AdminLayout({
       portal="Admin"
       audience="admin"
       nav={nav}
-      bottomNav={[nav[0], nav[1], nav[4], nav[5]].map((n) => ({ ...n }))}
       user={{ name: user?.name ?? "Administrator", sub: user?.email ?? "" }}
     >
       {children}

@@ -48,7 +48,11 @@ export default function InspectionsPage() {
     {
       key: "id",
       header: "Inspection",
-      cell: (inspection) => inspection.id,
+      cell: (inspection) => (
+        <span className="font-mono text-xs" title={inspection.id}>
+          {inspection.id.slice(0, 8).toUpperCase()}…
+        </span>
+      ),
       mobile: "title",
     },
     {

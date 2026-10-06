@@ -30,12 +30,12 @@ export function StatCard({ label, value, icon: Icon, hint, href, tone = "blue" }
 }) {
   const t = { blue: "bg-blue-50 text-blue-700", amber: "bg-amber-50 text-amber-700", green: "bg-emerald-50 text-emerald-700", violet: "bg-violet-50 text-violet-700" }[tone];
   const body = (
-    <Card className={cn("h-full flex-row items-start gap-3.5 p-4 shadow-none sm:p-5", href && "transition-colors hover:border-blue-300")}>
-      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", t)}><Icon className="h-5 w-5" /></div>
-      <div className="min-w-0">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="mt-0.5 text-2xl font-bold text-foreground">{value}</p>
-        {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
+    <Card className={cn("h-full flex-row items-start gap-2.5 p-3 shadow-none sm:gap-3.5 sm:p-5", href && "transition-colors hover:border-blue-300")}>
+      <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg sm:h-10 sm:w-10", t)}><Icon className="h-4 w-4 sm:h-5 sm:w-5" /></div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-xs text-muted-foreground sm:text-sm">{label}</p>
+        <p className="mt-0.5 truncate text-xl font-bold text-foreground sm:text-2xl">{value}</p>
+        {hint && <p className="mt-0.5 truncate text-xs text-muted-foreground">{hint}</p>}
       </div>
     </Card>
   );

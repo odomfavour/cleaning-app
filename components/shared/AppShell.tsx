@@ -84,7 +84,7 @@ export function AppShell({ nav, bottomNav, audience, user, cta, portal, children
             <NotificationPanel audience={audience} />
           </div>
         </header>
-        <main className={cn("mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8", bottomNav && "pb-28 lg:pb-8")}>{children}</main>
+        <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">{children}</main>
       </div>
       {bottomNav && <BottomNav items={bottomNav} path={path} onMore={() => setDrawer(true)} />}
     </div>
