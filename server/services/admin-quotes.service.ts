@@ -24,7 +24,11 @@ type PopulatedAdminQuote = {
     };
     preferredDate?: Date;
     preferredTimeSlot?: string;
-    schedule?: { alternativeDate?: Date; alternativeTimeSlot?: string; flexible?: boolean };
+    schedule?: {
+      alternativeDate?: Date;
+      alternativeTimeSlot?: string;
+      flexible?: boolean;
+    };
     status: string;
     createdAt?: Date;
   } | null;
@@ -189,7 +193,7 @@ const requestPopulate = {
     createdAt
   `,
 };
-
+// test
 const customerPopulate = {
   path: "customerId",
   select: "_id firstName lastName email phone",
