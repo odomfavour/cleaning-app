@@ -126,18 +126,38 @@ export async function POST(request: Request, context: RouteContext) {
   }
 }
 
-function serializeQuote(quote: any, requestReference: string) {
+type SerializableQuote = {
+  _id: { toString(): string };
+  quoteNumber: string;
+  items: {
+    _id: { toString(): string };
+    description: string;
+    quantity: number;
+    unitPriceKobo: number;
+    totalKobo: number;
+  }[];
+  subtotalKobo: number;
+  discountKobo: number;
+  totalKobo: number;
+  status: string;
+  sentAt?: Date;
+  expiresAt?: Date;
+  acceptedAt?: Date;
+  declinedAt?: Date;
+};
+
+function serializeQuote(quote: SerializableQuote, requestReference: string) {
   return {
     id: quote._id.toString(),
     quoteNumber: quote.quoteNumber,
     requestReference,
 
-    items: quote.items.map((item: any) => ({
+    items: quote.items.map((item) => ({
       id: item._id.toString(),
       description: item.description,
       quantity: item.quantity,
       unitPriceKobo: item.unitPriceKobo,
-      totalKobo: quote.totalKobo,
+      totalKobo: item.totalKobo,
     })),
 
     subtotalKobo: quote.subtotalKobo,
@@ -152,3 +172,4 @@ function serializeQuote(quote: any, requestReference: string) {
     declinedAt: quote.declinedAt?.toISOString(),
   };
 }
+

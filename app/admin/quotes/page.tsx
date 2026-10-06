@@ -109,7 +109,7 @@ export default function AdminQuotesPage() {
         title={view ? `Quote ${view.quoteNumber}` : ""}
         size="lg"
       >
-        {view && (
+        {view && view.customer && (
           <QuoteDocument
             quote={view}
             request={view.request}

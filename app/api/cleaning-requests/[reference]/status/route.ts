@@ -96,7 +96,7 @@ export async function GET(_request: Request, context: RouteContext) {
     }
 
     const services = (cleaningRequest.requestedServices ?? []).map(
-      (service) => service.name,
+      (service: { name: string }) => service.name,
     );
 
     return Response.json({

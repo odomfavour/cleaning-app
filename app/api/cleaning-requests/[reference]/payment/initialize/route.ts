@@ -128,7 +128,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
       .sort({ createdAt: -1 })
       .lean();
 
-    const existingAccessCode = existingPayment?.providerPayload?.initialization?.access_code;
+    const existingAccessCode =
+      existingPayment?.providerPayload?.initialization?.access_code;
 
     if (existingPayment && typeof existingAccessCode === "string") {
       return NextResponse.json({

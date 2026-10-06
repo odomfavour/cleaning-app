@@ -40,7 +40,9 @@ export type CustomerQuoteDetails = {
   paymentStatus: "success" | null;
 };
 
-export async function getCustomerQuoteById(id: string): Promise<CustomerQuoteDetails> {
+export async function getCustomerQuoteById(
+  id: string,
+): Promise<CustomerQuoteDetails> {
   const response = await apiClient.get<CustomerQuoteDetails>(
     `/customer/quotes/${encodeURIComponent(id)}`,
   );
@@ -52,7 +54,9 @@ export async function respondToCustomerQuote(
   id: string,
   action: "accept" | "decline",
 ): Promise<void> {
-  await apiClient.patch(`/customer/quotes/${encodeURIComponent(id)}`, { action });
+  await apiClient.patch(`/customer/quotes/${encodeURIComponent(id)}`, {
+    action,
+  });
 }
 
 type QuoteResponse = {

@@ -19,7 +19,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const cleaningRequest = await CleaningRequest.findOne({ reference }).lean();
 
     if (!cleaningRequest) {
-      return NextResponse.json({ message: "Request not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Request not found." },
+        { status: 404 },
+      );
     }
 
     if (
@@ -40,7 +43,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
       .lean();
 
     if (!quote) {
-      return NextResponse.json({ message: "Quote not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Quote not found." },
+        { status: 404 },
+      );
     }
 
     const payment = await Payment.findOne({
@@ -86,12 +92,16 @@ export async function POST(request: NextRequest, context: RouteContext) {
       const transaction = result.data;
 
       if (transaction.status !== "success") {
-        payment.status = transaction.status === "abandoned" ? "abandoned" : "failed";
+        payment.status =
+          transaction.status === "abandoned" ? "abandoned" : "failed";
         payment.providerPayload = { verification: transaction };
         await payment.save();
 
         return NextResponse.json(
-          { message: "Payment has not been completed.", status: transaction.status },
+          {
+            message: "Payment has not been completed.",
+            status: transaction.status,
+          },
           { status: 409 },
         );
       }
@@ -152,7 +162,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
 
-    if (!payment.bookingId || payment.bookingId.toString() !== booking._id.toString()) {
+    if (
+      !payment.bookingId ||
+      payment.bookingId.toString() !== booking._id.toString()
+    ) {
       payment.bookingId = booking._id;
       await payment.save();
     }

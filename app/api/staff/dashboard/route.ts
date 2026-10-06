@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth/session";
 import { connectToDatabase } from "@/server/db/connect";
-import { Booking, CleaningRequest, Customer, StaffProfile } from "@/server/models";
+import {
+  Booking,
+  CleaningRequest,
+  Customer,
+  StaffProfile,
+} from "@/server/models";
 
 export async function GET() {
   try {
@@ -48,7 +53,9 @@ export async function GET() {
     const customerIds = [
       ...new Set(bookings.map((booking) => booking.customerId.toString())),
     ];
-    const requestIds = [...new Set(bookings.map((booking) => booking.requestId.toString()))];
+    const requestIds = [
+      ...new Set(bookings.map((booking) => booking.requestId.toString())),
+    ];
 
     const [customers, requests] = await Promise.all([
       customerIds.length
@@ -58,7 +65,9 @@ export async function GET() {
         : [],
       requestIds.length
         ? CleaningRequest.find({ _id: { $in: requestIds } })
-            .select("_id requestedServices address preferredDate preferredTimeSlot")
+            .select(
+              "_id requestedServices address preferredDate preferredTimeSlot",
+            )
             .lean()
         : [],
     ]);
@@ -75,13 +84,15 @@ export async function GET() {
       ]),
     );
     const requestMap = new Map(
-      requests.map((request: {
-        _id: { toString(): string };
-        requestedServices: { name: string }[];
-        address: { addressLine1: string; area?: string; city: string };
-        preferredDate?: Date;
-        preferredTimeSlot?: string;
-      }) => [request._id.toString(), request]),
+      requests.map(
+        (request: {
+          _id: { toString(): string };
+          requestedServices: { name: string }[];
+          address: { addressLine1: string; area?: string; city: string };
+          preferredDate?: Date;
+          preferredTimeSlot?: string;
+        }) => [request._id.toString(), request],
+      ),
     );
 
     const now = new Date();
@@ -98,11 +109,21 @@ export async function GET() {
         customer: customer ?? null,
 
         scheduledFor: booking.scheduledFor?.toISOString() ?? null,
-        date: booking.scheduledFor?.toISOString() ?? request?.preferredDate?.toISOString() ?? null,
+        date:
+          booking.scheduledFor?.toISOString() ??
+          request?.preferredDate?.toISOString() ??
+          null,
         time: request?.preferredTimeSlot ?? null,
-        title: request?.requestedServices.map((service) => service.name).join(", ") ?? "Cleaning booking",
+        title:
+          request?.requestedServices
+            .map((service) => service.name)
+            .join(", ") ?? "Cleaning booking",
         location: request
-          ? [request.address.addressLine1, request.address.area, request.address.city]
+          ? [
+              request.address.addressLine1,
+              request.address.area,
+              request.address.city,
+            ]
               .filter(Boolean)
               .join(", ")
           : "",

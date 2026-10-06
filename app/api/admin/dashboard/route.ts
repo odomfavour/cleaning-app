@@ -43,62 +43,88 @@ export async function GET() {
       Review.find({}).sort({ createdAt: -1 }).limit(5).lean(),
     ]);
 
-    const customerIds = [...new Set([
-      ...requests.map((request) => request.customerId.toString()),
-      ...bookings.map((booking) => booking.customerId.toString()),
-      ...payments.map((payment) => payment.customerId.toString()),
-      ...quotes.map((quote) => quote.customerId.toString()),
-      ...reviews.map((review) => review.customerId.toString()),
-    ])];
+    const customerIds = [
+      ...new Set([
+        ...requests.map((request) => request.customerId.toString()),
+        ...bookings.map((booking) => booking.customerId.toString()),
+        ...payments.map((payment) => payment.customerId.toString()),
+        ...quotes.map((quote) => quote.customerId.toString()),
+        ...reviews.map((review) => review.customerId.toString()),
+      ]),
+    ];
     const customers = customerIds.length
       ? await Customer.find({ _id: { $in: customerIds } })
           .select("_id firstName lastName email")
           .lean()
       : [];
-    const customerMap = new Map(customers.map((customer: {
-      _id: { toString(): string };
-      firstName: string;
-      lastName: string;
-    }) => [customer._id.toString(), `${customer.firstName} ${customer.lastName}`.trim()]));
+    const customerMap = new Map(
+      customers.map(
+        (customer: {
+          _id: { toString(): string };
+          firstName: string;
+          lastName: string;
+        }) => [
+          customer._id.toString(),
+          `${customer.firstName} ${customer.lastName}`.trim(),
+        ],
+      ),
+    );
 
     const requestIds = bookings.map((booking) => booking.requestId);
     const bookingRequests = requestIds.length
       ? await CleaningRequest.find({ _id: { $in: requestIds } })
-          .select("_id reference requestedServices preferredDate preferredTimeSlot")
+          .select(
+            "_id reference requestedServices preferredDate preferredTimeSlot",
+          )
           .lean()
       : [];
-    const requestMap = new Map(bookingRequests.map((request: {
-      _id: { toString(): string };
-      reference: string;
-      requestedServices: { name: string }[];
-      preferredDate?: Date;
-      preferredTimeSlot?: string;
-    }) => [request._id.toString(), request]));
+    const requestMap = new Map(
+      bookingRequests.map(
+        (request: {
+          _id: { toString(): string };
+          reference: string;
+          requestedServices: { name: string }[];
+          preferredDate?: Date;
+          preferredTimeSlot?: string;
+        }) => [request._id.toString(), request],
+      ),
+    );
 
-    const upcoming = bookings.filter((booking) =>
-      !["completed", "cancelled"].includes(booking.status) &&
-      (!booking.scheduledFor || booking.scheduledFor >= todayStart),
+    const upcoming = bookings.filter(
+      (booking) =>
+        !["completed", "cancelled"].includes(booking.status) &&
+        (!booking.scheduledFor || booking.scheduledFor >= todayStart),
     );
     const unassignedUpcoming = upcoming.filter(
       (booking) => booking.assignedStaffIds.length === 0,
     );
-    const completed = bookings.filter((booking) => booking.status === "completed");
+    const completed = bookings.filter(
+      (booking) => booking.status === "completed",
+    );
     const needsQuote = requests.filter((request) =>
-      ["reviewing", "inspection_required", "inspection_scheduled"].includes(request.status),
+      ["reviewing", "inspection_required", "inspection_scheduled"].includes(
+        request.status,
+      ),
     );
     const weekBuckets = Array.from({ length: 8 }, (_, index) => {
       const start = new Date(revenueStart);
       start.setDate(start.getDate() + index * 7);
       return {
         start,
-        label: start.toLocaleDateString("en-NG", { month: "short", day: "numeric" }),
+        label: start.toLocaleDateString("en-NG", {
+          month: "short",
+          day: "numeric",
+        }),
         value: 0,
       };
     });
 
     for (const payment of payments) {
       if (!payment.paidAt) continue;
-      const bucketIndex = Math.floor((startOfWeek(payment.paidAt).getTime() - revenueStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
+      const bucketIndex = Math.floor(
+        (startOfWeek(payment.paidAt).getTime() - revenueStart.getTime()) /
+          (7 * 24 * 60 * 60 * 1000),
+      );
       if (bucketIndex >= 0 && bucketIndex < weekBuckets.length) {
         weekBuckets[bucketIndex].value += payment.amountKobo / 100;
       }
@@ -123,22 +149,36 @@ export async function GET() {
         customer: customerMap.get(review.customerId.toString()) ?? "Customer",
         at: review.createdAt.toISOString(),
       })),
-    ].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 6);
+    ]
+      .sort((a, b) => b.at.localeCompare(a.at))
+      .slice(0, 6);
 
     return NextResponse.json({
       stats: {
-        requestsToday: requests.filter((request) => request.createdAt >= todayStart && request.createdAt < tomorrowStart).length,
+        requestsToday: requests.filter(
+          (request) =>
+            request.createdAt >= todayStart &&
+            request.createdAt < tomorrowStart,
+        ).length,
         needsQuote: needsQuote.length,
         upcomingBookings: upcoming.length,
         unassignedBookings: unassignedUpcoming.length,
         completedBookings: completed.length,
-        paidRevenueKobo: payments.reduce((total, payment) => total + payment.amountKobo, 0),
+        paidRevenueKobo: payments.reduce(
+          (total, payment) => total + payment.amountKobo,
+          0,
+        ),
       },
       requests: requests.slice(0, 6).map((request) => ({
         id: request._id.toString(),
         reference: request.reference,
-        customer: customerMap.get(request.customerId.toString()) ?? request.contactSnapshot?.name ?? "Unknown customer",
-        services: request.requestedServices.map((service: { name: string }) => service.name),
+        customer:
+          customerMap.get(request.customerId.toString()) ??
+          request.contactSnapshot?.name ??
+          "Unknown customer",
+        services: request.requestedServices.map(
+          (service: { name: string }) => service.name,
+        ),
         status: request.status,
         submittedAt: request.createdAt.toISOString(),
       })),
@@ -147,11 +187,19 @@ export async function GET() {
         return {
           id: booking._id.toString(),
           bookingNumber: booking.bookingNumber,
-          title: request?.requestedServices.map((service) => service.name).join(", ") || "Cleaning booking",
+          title:
+            request?.requestedServices
+              .map((service) => service.name)
+              .join(", ") || "Cleaning booking",
           status: booking.status,
-          scheduledFor: booking.scheduledFor?.toISOString() ?? request?.preferredDate?.toISOString() ?? null,
+          scheduledFor:
+            booking.scheduledFor?.toISOString() ??
+            request?.preferredDate?.toISOString() ??
+            null,
           preferredTime: request?.preferredTimeSlot ?? null,
-          customer: customerMap.get(booking.customerId.toString()) ?? "Unknown customer",
+          customer:
+            customerMap.get(booking.customerId.toString()) ??
+            "Unknown customer",
           unassigned: booking.assignedStaffIds.length === 0,
         };
       }),

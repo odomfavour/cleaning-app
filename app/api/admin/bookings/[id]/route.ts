@@ -30,7 +30,9 @@ const updateSchema = z
       ])
       .optional(),
   })
-  .refine((value) => value.staffIds !== undefined || value.status !== undefined);
+  .refine(
+    (value) => value.staffIds !== undefined || value.status !== undefined,
+  );
 
 async function loadBooking(id: string) {
   if (!Types.ObjectId.isValid(id)) return null;
@@ -117,7 +119,10 @@ export async function GET(_request: Request, context: RouteContext) {
     const data = await loadBooking(id);
 
     if (!data) {
-      return NextResponse.json({ message: "Booking not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Booking not found." },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json({ booking: data });
@@ -138,17 +143,26 @@ export async function PATCH(request: Request, context: RouteContext) {
     await connectToDatabase();
     const { id } = await context.params;
     if (!Types.ObjectId.isValid(id)) {
-      return NextResponse.json({ message: "Booking not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Booking not found." },
+        { status: 404 },
+      );
     }
 
     const parsed = updateSchema.safeParse(await request.json());
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid booking update." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid booking update." },
+        { status: 400 },
+      );
     }
 
     const booking = await Booking.findById(id);
     if (!booking) {
-      return NextResponse.json({ message: "Booking not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Booking not found." },
+        { status: 404 },
+      );
     }
 
     const update: Record<string, unknown> = {};
@@ -159,18 +173,25 @@ export async function PATCH(request: Request, context: RouteContext) {
         _id: { $in: staffIds },
         active: true,
         role: { $ne: "Inspector" },
-      }).select("_id").lean();
+      })
+        .select("_id")
+        .lean();
 
       if (staff.length !== staffIds.length) {
         return NextResponse.json(
-          { message: "One or more selected staff are unavailable for assignment." },
+          {
+            message:
+              "One or more selected staff are unavailable for assignment.",
+          },
           { status: 400 },
         );
       }
 
       update.assignedStaffIds = staff.map((member) => member._id);
-      if (staffIds.length && booking.status === "confirmed") update.status = "assigned";
-      if (!staffIds.length && booking.status === "assigned") update.status = "confirmed";
+      if (staffIds.length && booking.status === "confirmed")
+        update.status = "assigned";
+      if (!staffIds.length && booking.status === "assigned")
+        update.status = "confirmed";
     }
 
     if (parsed.data.status) {

@@ -16,7 +16,7 @@ export const requestStatus: Record<RequestStatus, { label: string; tone: Tone }>
 };
 export const bookingStatus: Record<BookingStatus, { label: string; tone: Tone }> = {
   confirmed: { label: "Confirmed", tone: "info" },
-  staff_assigned: { label: "Staff assigned", tone: "purple" },
+  assigned: { label: "Staff assigned", tone: "purple" },
   en_route: { label: "En route", tone: "warning" },
   arrived: { label: "Arrived", tone: "warning" },
   in_progress: { label: "In progress", tone: "warning" },

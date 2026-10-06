@@ -122,7 +122,7 @@ export function RequestSuccess({
                 {
                   label: "Preferred schedule",
                   value: `${fmtLong(
-                    r.preferredDate,
+                    r.preferredDate.toISOString(),
                   )}, ${fmtTime(r.preferredTimeSlot)}${
                     r.schedule.flexible ? " (flexible)" : ""
                   }`,

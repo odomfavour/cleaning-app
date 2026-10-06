@@ -188,7 +188,6 @@ export function trackingTimeline(request: PublicRequestStatus): TimelineItem[] {
     status,
     submittedAt,
     inspection,
-    hasQuote,
     quoteStatus,
     paymentStatus,
     hasBooking,

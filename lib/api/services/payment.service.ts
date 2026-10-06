@@ -44,7 +44,10 @@ export type CustomerPaymentStatus = {
   } | null;
 };
 
-export type CustomerPaymentVerification = Omit<CustomerPaymentStatus, "payment"> & {
+export type CustomerPaymentVerification = Omit<
+  CustomerPaymentStatus,
+  "payment"
+> & {
   payment: CustomerPayment;
 };
 

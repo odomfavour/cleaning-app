@@ -2,7 +2,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Bell, CheckCheck } from "lucide-react";
-import { api } from "@/lib/api";
+import {
+  getNotifications,
+  markAllNotificationsRead,
+} from "@/lib/api/services/notification.service";
 import { useApi } from "@/lib/hooks";
 import type { Role } from "@/lib/types";
 import { cn, fmtDate } from "@/lib/utils";
@@ -13,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 
 export function NotificationPanel({ audience }: { audience: Role }) {
   const [open, setOpen] = useState(false);
-  const { data, loading, reload } = useApi(() => api.notifications.getAll(audience), [audience]);
+  const { data, loading, reload } = useApi(() => getNotifications(audience), [audience]);
   const unread = data?.filter((n) => !n.read).length ?? 0;
 
   return (
@@ -28,7 +31,7 @@ export function NotificationPanel({ audience }: { audience: Role }) {
         <div className="flex items-center justify-between px-4 py-3">
           <h2 className="text-sm font-semibold">Notifications</h2>
           {unread > 0 && (
-            <Button variant="link" size="sm" className="h-auto gap-1 p-0 text-xs" onClick={async () => { await api.notifications.markAllRead(audience); reload(); }}>
+            <Button variant="link" size="sm" className="h-auto gap-1 p-0 text-xs" onClick={async () => { await markAllNotificationsRead(audience); reload(); }}>
               <CheckCheck className="size-3.5" />Mark all read
             </Button>
           )}

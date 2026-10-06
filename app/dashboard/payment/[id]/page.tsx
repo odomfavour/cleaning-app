@@ -97,7 +97,9 @@ export default function PaymentPage() {
             <p className="text-muted-foreground">{request.address}</p>
             <div className="flex justify-between border-t pt-3">
               <span>Quote total</span>
-              <span className="font-semibold">{formatNaira(quote.totalKobo)}</span>
+              <span className="font-semibold">
+                {formatNaira(quote.totalKobo)}
+              </span>
             </div>
           </CardBody>
         </Card>

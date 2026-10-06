@@ -12,7 +12,6 @@ import { Button } from "@/components/kit/Button";
 import { Card, CardBody, CardHeader, DetailList } from "@/components/kit/Card";
 
 import { StatusBadge } from "@/components/kit/Badge";
-import { Timeline } from "@/components/kit/Timeline";
 import { Dialog } from "@/components/kit/Dialog";
 import { Textarea } from "@/components/kit/Field";
 

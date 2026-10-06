@@ -30,7 +30,10 @@ export async function GET() {
     }
 
     if (user.role !== "customer" || !user.customerId) {
-      return NextResponse.json({ message: "Customer access required." }, { status: 403 });
+      return NextResponse.json(
+        { message: "Customer access required." },
+        { status: 403 },
+      );
     }
 
     const requests = await CleaningRequest.find({ customerId: user.customerId })
@@ -38,7 +41,9 @@ export async function GET() {
       .lean();
     const requestIds = requests.map((request) => request._id);
     const [quotes, bookings] = await Promise.all([
-      Quote.find({ requestId: { $in: requestIds } }).sort({ createdAt: -1 }).lean(),
+      Quote.find({ requestId: { $in: requestIds } })
+        .sort({ createdAt: -1 })
+        .lean(),
       Booking.find({ requestId: { $in: requestIds } }).lean(),
     ]);
     const latestQuotes = new Map<string, (typeof quotes)[number]>();
@@ -56,7 +61,10 @@ export async function GET() {
       requests: requests.map((request) => {
         const quote = latestQuotes.get(request._id.toString());
         const booking = bookingByRequest.get(request._id.toString());
-        const environment = request.propertyDetails?.environment ?? request.propertyType ?? "other";
+        const environment =
+          request.propertyDetails?.environment ??
+          request.propertyType ??
+          "other";
 
         return {
           id: request.reference,

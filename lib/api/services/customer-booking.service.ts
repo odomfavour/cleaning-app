@@ -3,7 +3,14 @@ import { apiClient } from "@/lib/api/client";
 export type CustomerBooking = {
   id: string;
   bookingNumber: string;
-  status: "confirmed" | "assigned" | "en_route" | "arrived" | "in_progress" | "completed" | "cancelled";
+  status:
+    | "confirmed"
+    | "assigned"
+    | "en_route"
+    | "arrived"
+    | "in_progress"
+    | "completed"
+    | "cancelled";
   amountKobo: number;
   paymentReference: string;
   date: string | null;

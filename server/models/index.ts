@@ -12,3 +12,4 @@ export { Review } from "./Review";
 export { StaffProfile } from "./StaffProfile";
 export { VerificationCode } from "./VerificationCode";
 export { RequestAccessCode } from "./RequestAccessCode";
+export { User } from "./User";

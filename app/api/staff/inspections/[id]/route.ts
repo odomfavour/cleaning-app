@@ -101,10 +101,12 @@ export async function GET(_request: Request, context: RouteContext) {
 
         address: request.address,
 
-        requestedServices: request.requestedServices.map((service) => ({
-          serviceId: service.serviceId.toString(),
-          name: service.name,
-        })),
+        requestedServices: request.requestedServices.map(
+          (service: { serviceId: string; name: string }) => ({
+            serviceId: service.serviceId.toString(),
+            name: service.name,
+          }),
+        ),
 
         requestNotes: request.notes,
 

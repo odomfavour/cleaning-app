@@ -25,24 +25,35 @@ export async function GET(_request: Request, context: RouteContext) {
   try {
     const user = await requireRole(["staff"]);
     if (!user.staffProfileId) {
-      return NextResponse.json({ message: "Staff profile is not linked." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Staff profile is not linked." },
+        { status: 400 },
+      );
     }
 
     await connectToDatabase();
     const { id } = await context.params;
     const booking = await getStaffBooking(id, user.staffProfileId);
 
-    if (!booking) return NextResponse.json({ message: "Assigned job not found." }, { status: 404 });
+    if (!booking)
+      return NextResponse.json(
+        { message: "Assigned job not found." },
+        { status: 404 },
+      );
 
     return NextResponse.json({ booking });
   } catch (error) {
     console.error("GET /api/staff/bookings/[id] failed:", error);
-    const status = error instanceof Error && error.message === "Authentication required"
-      ? 401
-      : error instanceof Error && error.message === "Forbidden"
-        ? 403
-        : 500;
-    return NextResponse.json({ message: "Unable to load this job." }, { status });
+    const status =
+      error instanceof Error && error.message === "Authentication required"
+        ? 401
+        : error instanceof Error && error.message === "Forbidden"
+          ? 403
+          : 500;
+    return NextResponse.json(
+      { message: "Unable to load this job." },
+      { status },
+    );
   }
 }
 
@@ -50,12 +61,18 @@ export async function PATCH(request: Request, context: RouteContext) {
   try {
     const user = await requireRole(["staff"]);
     if (!user.staffProfileId) {
-      return NextResponse.json({ message: "Staff profile is not linked." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Staff profile is not linked." },
+        { status: 400 },
+      );
     }
 
     const parsed = updateSchema.safeParse(await request.json());
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid job status." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid job status." },
+        { status: 400 },
+      );
     }
 
     await connectToDatabase();
@@ -65,7 +82,11 @@ export async function PATCH(request: Request, context: RouteContext) {
       assignedStaffIds: user.staffProfileId,
     });
 
-    if (!booking) return NextResponse.json({ message: "Assigned job not found." }, { status: 404 });
+    if (!booking)
+      return NextResponse.json(
+        { message: "Assigned job not found." },
+        { status: 404 },
+      );
 
     if (nextStatuses[booking.status] !== parsed.data.status) {
       return NextResponse.json(
@@ -82,11 +103,15 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json({ booking: updated });
   } catch (error) {
     console.error("PATCH /api/staff/bookings/[id] failed:", error);
-    const status = error instanceof Error && error.message === "Authentication required"
-      ? 401
-      : error instanceof Error && error.message === "Forbidden"
-        ? 403
-        : 500;
-    return NextResponse.json({ message: "Unable to update this job." }, { status });
+    const status =
+      error instanceof Error && error.message === "Authentication required"
+        ? 401
+        : error instanceof Error && error.message === "Forbidden"
+          ? 403
+          : 500;
+    return NextResponse.json(
+      { message: "Unable to update this job." },
+      { status },
+    );
   }
 }

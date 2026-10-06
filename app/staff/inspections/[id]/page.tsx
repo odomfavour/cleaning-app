@@ -67,6 +67,7 @@ export default function StaffInspectionDetail() {
   useEffect(() => {
     if (!inspection?.report) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm({
       condition: inspection.report.condition ?? "",
       size: inspection.report.size ?? "",

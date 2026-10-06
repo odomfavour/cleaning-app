@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api/client";
 import type { CreateCleaningRequestInput } from "@/lib/validations/cleaning-request";
+import type { AdminRequestDetail } from "@/lib/api/services/admin-cleaning-requests.service";
 
 export type CleaningRequestResponse = {
   request: {
@@ -37,12 +38,41 @@ export type CustomerRequestSummary = {
   bookingId?: string;
 };
 
+export type CustomerRequestDetail = {
+  request: AdminRequestDetail["request"] & {
+    services: string[];
+    inspectionId?: string;
+    quoteId?: string;
+    bookingId?: string;
+  };
+  customer: AdminRequestDetail["customer"] | null;
+  inspection: AdminRequestDetail["inspection"];
+  quote: AdminRequestDetail["quote"];
+  booking: AdminRequestDetail["booking"];
+};
+
 export async function getCustomerRequests(): Promise<CustomerRequestSummary[]> {
   const response = await apiClient.get<{ requests: CustomerRequestSummary[] }>(
     "/customer/requests",
   );
 
   return response.data.requests;
+}
+
+export async function getCustomerRequest(
+  reference: string,
+): Promise<CustomerRequestDetail> {
+  const response = await apiClient.get<CustomerRequestDetail>(
+    `/customer/requests/${encodeURIComponent(reference)}`,
+  );
+  return response.data;
+}
+
+export async function cancelCustomerRequest(reference: string): Promise<void> {
+  await apiClient.patch(
+    `/customer/requests/${encodeURIComponent(reference)}`,
+    { action: "cancel" },
+  );
 }
 
 export async function createCleaningRequest(

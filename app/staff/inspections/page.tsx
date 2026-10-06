@@ -1,13 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ClipboardCheck } from "lucide-react";
 
 import {
   PageHeader,
   PageSkeleton,
   ErrorState,
-  EmptyState,
 } from "@/components/kit/Page";
 import { Card } from "@/components/kit/Card";
 import { Tabs } from "@/components/kit/Tabs";
@@ -27,22 +25,22 @@ const tabs: { value: Tab; label: string }[] = [
   { value: "in_progress", label: "In progress" },
   { value: "completed", label: "Completed" },
 ];
-const inspectionStatus = {
+export const inspectionStatus = {
   scheduled: {
     label: "Scheduled",
-    tone: "blue",
+    tone: "info",
   },
   in_progress: {
     label: "In progress",
-    tone: "amber",
+    tone: "warning",
   },
   completed: {
     label: "Completed",
-    tone: "green",
+    tone: "success",
   },
   cancelled: {
     label: "Cancelled",
-    tone: "red",
+    tone: "danger",
   },
 } as const;
 export default function StaffInspectionsPage() {

@@ -55,3 +55,8 @@ export async function getCurrentUser(): Promise<AuthUser> {
 
   return response.data.user;
 }
+
+export async function forgotPassword(email: string): Promise<void> {
+  await apiClient.post("/auth/forgot-password", { email });
+}
+

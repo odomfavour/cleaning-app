@@ -85,9 +85,13 @@ export async function getCurrentUser() {
   }
 
   const profile = user.customerId
-    ? await Customer.findById(user.customerId).select("firstName lastName phone").lean()
+    ? await Customer.findById(user.customerId)
+        .select("firstName lastName phone")
+        .lean()
     : user.staffProfileId
-      ? await StaffProfile.findById(user.staffProfileId).select("firstName lastName phone").lean()
+      ? await StaffProfile.findById(user.staffProfileId)
+          .select("firstName lastName phone")
+          .lean()
       : null;
 
   const name = profile

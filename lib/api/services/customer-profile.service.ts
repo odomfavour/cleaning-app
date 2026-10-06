@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api/client";
+import type { Address } from "@/lib/types";
 
 export type CustomerProfile = {
   id: string;
@@ -8,6 +9,7 @@ export type CustomerProfile = {
   email: string;
   phone: string;
   createdAt: string;
+  addresses?: Address[];
 };
 
 export async function getCustomerProfile(): Promise<CustomerProfile> {

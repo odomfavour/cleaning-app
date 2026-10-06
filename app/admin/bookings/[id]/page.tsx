@@ -39,14 +39,18 @@ function displayStatus(status: string) {
 
 function formatDate(value: string | null | undefined) {
   return value
-    ? new Intl.DateTimeFormat("en-NG", { dateStyle: "medium" }).format(new Date(value))
+    ? new Intl.DateTimeFormat("en-NG", { dateStyle: "medium" }).format(
+        new Date(value),
+      )
     : "Not scheduled";
 }
 
 function formatTime(value: string | null | undefined) {
   if (!value) return "Time to be confirmed";
   if (/^\d{1,2}:\d{2}/.test(value)) return value;
-  return new Intl.DateTimeFormat("en-NG", { timeStyle: "short" }).format(new Date(value));
+  return new Intl.DateTimeFormat("en-NG", { timeStyle: "short" }).format(
+    new Date(value),
+  );
 }
 
 export default function AdminBookingDetail() {
@@ -114,23 +118,32 @@ export default function AdminBookingDetail() {
       <PageHeader
         back={{ href: "/admin/bookings", label: "Bookings" }}
         title={request?.services.join(", ") || "Cleaning booking"}
-        meta={<StatusBadge status={displayStatus(booking.status)} map={bookingStatus} />}
+        meta={
+          <StatusBadge
+            status={displayStatus(booking.status)}
+            map={bookingStatus}
+          />
+        }
         description={`${booking.bookingNumber} · ${customer?.name ?? "Unknown customer"}`}
-        actions={!closed && (
-          <>
-            <Button onClick={openAssignment}>
-              <UserPlus className="h-4 w-4" />
-              {booking.assignedStaffIds.length ? "Change staff" : "Assign staff"}
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-red-700 hover:bg-red-50"
-              onClick={() => setCancel(true)}
-            >
-              Cancel booking
-            </Button>
-          </>
-        )}
+        actions={
+          !closed && (
+            <>
+              <Button onClick={openAssignment}>
+                <UserPlus className="h-4 w-4" />
+                {booking.assignedStaffIds.length
+                  ? "Change staff"
+                  : "Assign staff"}
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-red-700 hover:bg-red-50"
+                onClick={() => setCancel(true)}
+              >
+                Cancel booking
+              </Button>
+            </>
+          )
+        }
       />
       {!closed && (
         <Card className="mb-6">
@@ -143,7 +156,10 @@ export default function AdminBookingDetail() {
                   aria-label="Set booking status"
                   value={booking.status}
                   onChange={(event) =>
-                    updateMutation.mutate({ status: event.target.value as AdminBookingUpdate["status"] })
+                    updateMutation.mutate({
+                      status: event.target
+                        .value as AdminBookingUpdate["status"],
+                    })
                   }
                   options={statusOptions}
                 />
@@ -157,15 +173,28 @@ export default function AdminBookingDetail() {
           <Card>
             <CardHeader title="Job details" />
             <CardBody>
-              <DetailList items={[
-                { label: "Date", value: formatDate(scheduledDate) },
-                { label: "Time", value: formatTime(scheduledTime) },
-                { label: "Location", value: request?.location || "Not provided" },
-                { label: "Amount", value: naira(booking.amountKobo / 100) },
-                { label: "Request", value: request?.reference ?? "—" },
-                { label: "Payment", value: data.payment ? `${data.payment.reference} (${data.payment.status})` : "—" },
-                { label: "Instructions", value: request?.instructions || "—" },
-              ]} />
+              <DetailList
+                items={[
+                  { label: "Date", value: formatDate(scheduledDate) },
+                  { label: "Time", value: formatTime(scheduledTime) },
+                  {
+                    label: "Location",
+                    value: request?.location || "Not provided",
+                  },
+                  { label: "Amount", value: naira(booking.amountKobo / 100) },
+                  { label: "Request", value: request?.reference ?? "—" },
+                  {
+                    label: "Payment",
+                    value: data.payment
+                      ? `${data.payment.reference} (${data.payment.status})`
+                      : "—",
+                  },
+                  {
+                    label: "Instructions",
+                    value: request?.instructions || "—",
+                  },
+                ]}
+              />
             </CardBody>
           </Card>
         </div>
@@ -175,30 +204,49 @@ export default function AdminBookingDetail() {
             {data.staff.length ? (
               <ul className="divide-y divide-border">
                 {data.staff.map((staff) => (
-                  <li key={staff.id} className="flex items-center gap-3 px-5 py-3">
+                  <li
+                    key={staff.id}
+                    className="flex items-center gap-3 px-5 py-3"
+                  >
                     <Avatar name={staff.name} size="sm" />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold">{staff.name}</p>
-                      <p className="text-xs text-muted-foreground">{staff.role} · {staff.phone}</p>
+                      <p className="truncate text-sm font-semibold">
+                        {staff.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {staff.role} · {staff.phone}
+                      </p>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
               <CardBody>
-                <p className="text-sm text-muted-foreground">No one is assigned yet.</p>
-                {!closed && <Button size="sm" className="mt-3" onClick={openAssignment}>Assign staff</Button>}
+                <p className="text-sm text-muted-foreground">
+                  No one is assigned yet.
+                </p>
+                {!closed && (
+                  <Button size="sm" className="mt-3" onClick={openAssignment}>
+                    Assign staff
+                  </Button>
+                )}
               </CardBody>
             )}
           </Card>
           <Card>
             <CardHeader title="Customer" />
             <CardBody>
-              <DetailList cols={1} items={[
-                { label: "Name", value: customer?.name ?? "Unknown customer" },
-                { label: "Phone", value: customer?.phone || "—" },
-                { label: "Email", value: customer?.email || "—" },
-              ]} />
+              <DetailList
+                cols={1}
+                items={[
+                  {
+                    label: "Name",
+                    value: customer?.name ?? "Unknown customer",
+                  },
+                  { label: "Phone", value: customer?.phone || "—" },
+                  { label: "Email", value: customer?.email || "—" },
+                ]}
+              />
             </CardBody>
           </Card>
         </div>
@@ -210,7 +258,13 @@ export default function AdminBookingDetail() {
         description="Select the team members who will work this job."
         footer={
           <>
-            <Button variant="secondary" onClick={() => setAssignOpen(false)} disabled={updateMutation.isPending}>Cancel</Button>
+            <Button
+              variant="secondary"
+              onClick={() => setAssignOpen(false)}
+              disabled={updateMutation.isPending}
+            >
+              Cancel
+            </Button>
             <Button
               onClick={() => updateMutation.mutate({ staffIds: selectedStaff })}
               loading={updateMutation.isPending}
@@ -223,7 +277,9 @@ export default function AdminBookingDetail() {
         {staffQuery.isLoading ? (
           <p className="py-4 text-sm text-muted-foreground">Loading staff…</p>
         ) : staffQuery.error ? (
-          <p className="py-4 text-sm text-red-700">{getApiErrorMessage(staffQuery.error)}</p>
+          <p className="py-4 text-sm text-red-700">
+            {getApiErrorMessage(staffQuery.error)}
+          </p>
         ) : availableStaff.length ? (
           <ul className="space-y-2">
             {availableStaff.map((staff) => (
@@ -235,15 +291,21 @@ export default function AdminBookingDetail() {
                 >
                   <Avatar name={staff.name} size="sm" />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold">{staff.name}</span>
-                    <span className="block text-xs text-muted-foreground">{staff.role} · {staff.availability.replace("_", " ")}</span>
+                    <span className="block truncate text-sm font-semibold">
+                      {staff.name}
+                    </span>
+                    <span className="block text-xs text-muted-foreground">
+                      {staff.role} · {staff.availability.replace("_", " ")}
+                    </span>
                   </span>
                 </CheckboxCard>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="py-4 text-sm text-muted-foreground">No active staff are available for assignment.</p>
+          <p className="py-4 text-sm text-muted-foreground">
+            No active staff are available for assignment.
+          </p>
         )}
       </Dialog>
       <ConfirmDialog

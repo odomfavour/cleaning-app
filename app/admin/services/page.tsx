@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
 import { PageHeader } from "@/components/kit/Page";
 import { Button } from "@/components/kit/Button";
 import { Card } from "@/components/kit/Card";

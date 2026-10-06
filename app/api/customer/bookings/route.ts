@@ -8,9 +8,13 @@ export async function GET() {
   try {
     const user = await getCurrentUser();
 
-    if (!user) return NextResponse.json({ message: "Login required." }, { status: 401 });
+    if (!user)
+      return NextResponse.json({ message: "Login required." }, { status: 401 });
     if (user.role !== "customer" || !user.customerId) {
-      return NextResponse.json({ message: "Customer access required." }, { status: 403 });
+      return NextResponse.json(
+        { message: "Customer access required." },
+        { status: 403 },
+      );
     }
 
     await connectToDatabase();
@@ -24,6 +28,9 @@ export async function GET() {
     return NextResponse.json({ bookings: serialized });
   } catch (error) {
     console.error("GET /api/customer/bookings failed:", error);
-    return NextResponse.json({ message: "Unable to load your bookings." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Unable to load your bookings." },
+      { status: 500 },
+    );
   }
 }

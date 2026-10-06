@@ -56,7 +56,9 @@ export async function GET() {
           phone: request.contactSnapshot?.phone,
         },
 
-        services: request.requestedServices.map((service) => service.name),
+        services: request.requestedServices.map(
+          (service: { name: string }) => service.name,
+        ),
 
         environment: request.propertyDetails?.environment,
         propertyType: request.propertyType,

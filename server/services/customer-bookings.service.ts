@@ -1,4 +1,10 @@
-import { Booking, CleaningRequest, Payment, Review, StaffProfile } from "@/server/models";
+import {
+  Booking,
+  CleaningRequest,
+  Payment,
+  Review,
+  StaffProfile,
+} from "@/server/models";
 import { Types } from "mongoose";
 
 type BookingRecord = {
@@ -30,7 +36,10 @@ export async function serializeCustomerBooking(booking: BookingRecord) {
     status: booking.status,
     amountKobo: booking.amountKobo,
     paymentReference: booking.paymentReference,
-    date: booking.scheduledFor?.toISOString() ?? request?.preferredDate?.toISOString() ?? null,
+    date:
+      booking.scheduledFor?.toISOString() ??
+      request?.preferredDate?.toISOString() ??
+      null,
     time: request?.preferredTimeSlot ?? null,
     location: request
       ? [
@@ -38,25 +47,30 @@ export async function serializeCustomerBooking(booking: BookingRecord) {
           request.address.area,
           request.address.city,
           request.address.state,
-        ].filter(Boolean).join(", ")
+        ]
+          .filter(Boolean)
+          .join(", ")
       : "",
-    title: request?.requestedServices.map(
-      (service: { name: string }) => service.name,
-    ).join(", ") ?? "Cleaning booking",
+    title:
+      request?.requestedServices
+        .map((service: { name: string }) => service.name)
+        .join(", ") ?? "Cleaning booking",
     instructions: request?.notes ?? "",
     requestReference: request?.reference ?? "",
-    team: staff.map((member: {
-      _id: Types.ObjectId;
-      firstName: string;
-      lastName: string;
-      role: string;
-      phone: string;
-    }) => ({
-      id: member._id.toString(),
-      name: `${member.firstName} ${member.lastName}`.trim(),
-      role: member.role,
-      phone: member.phone,
-    })),
+    team: staff.map(
+      (member: {
+        _id: Types.ObjectId;
+        firstName: string;
+        lastName: string;
+        role: string;
+        phone: string;
+      }) => ({
+        id: member._id.toString(),
+        name: `${member.firstName} ${member.lastName}`.trim(),
+        role: member.role,
+        phone: member.phone,
+      }),
+    ),
     payment: payment
       ? {
           reference: payment.reference,
@@ -68,13 +82,16 @@ export async function serializeCustomerBooking(booking: BookingRecord) {
       ? {
           rating: review.rating,
           comment: review.comment ?? "",
-            photos: review.photos ?? [],
+          photos: review.photos ?? [],
         }
       : null,
   };
 }
 
-export async function findCustomerBooking(customerId: string, bookingId: string) {
+export async function findCustomerBooking(
+  customerId: string,
+  bookingId: string,
+) {
   if (!Types.ObjectId.isValid(bookingId)) return null;
 
   const booking = await Booking.findOne({

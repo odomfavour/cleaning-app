@@ -135,31 +135,28 @@ export interface Inspection {
   report?: InspectionReport;
 }
 
-export interface QuoteItem {
-  id: string;
-  description: string;
-  amount: number;
-}
 export type QuoteStatus =
   | "draft"
   | "sent"
   | "accepted"
   | "declined"
   | "expired";
+
 export interface QuoteItem {
   id: string;
   description: string;
-  quantity: number;
-  unitPriceKobo: number;
-  totalKobo: number;
+  quantity?: number;
+  unitPriceKobo?: number;
+  totalKobo?: number;
+  amount?: number;
 }
 
 export interface Quote {
   id: string;
   quoteNumber: string;
 
-  request: CleaningRequest | null;
-  customer: Pick<Customer, "id" | "name" | "email" | "phone"> | null;
+  request?: CleaningRequest | { id: string; reference: string } | null;
+  customer?: Pick<Customer, "id" | "name" | "email" | "phone"> | null;
 
   items: QuoteItem[];
 
@@ -168,6 +165,9 @@ export interface Quote {
   taxRate: number;
   taxKobo: number;
   totalKobo: number;
+
+  discount?: number;
+  validUntil?: string;
 
   status: QuoteStatus;
 

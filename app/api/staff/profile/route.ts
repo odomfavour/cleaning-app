@@ -21,7 +21,10 @@ export async function PATCH(request: Request) {
 
     const parsed = availabilitySchema.safeParse(await request.json());
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid availability status." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid availability status." },
+        { status: 400 },
+      );
     }
 
     await connectToDatabase();
@@ -29,9 +32,15 @@ export async function PATCH(request: Request) {
       { _id: user.staffProfileId, active: true },
       { $set: { availability: parsed.data.availability } },
       { new: true },
-    ).select("_id firstName lastName email phone role availability active rating");
+    ).select(
+      "_id firstName lastName email phone role availability active rating",
+    );
 
-    if (!staff) return NextResponse.json({ message: "Staff profile not found." }, { status: 404 });
+    if (!staff)
+      return NextResponse.json(
+        { message: "Staff profile not found." },
+        { status: 404 },
+      );
 
     return NextResponse.json({
       staff: {
@@ -49,11 +58,15 @@ export async function PATCH(request: Request) {
     });
   } catch (error) {
     console.error("PATCH /api/staff/profile failed:", error);
-    const status = error instanceof Error && error.message === "Authentication required"
-      ? 401
-      : error instanceof Error && error.message === "Forbidden"
-        ? 403
-        : 500;
-    return NextResponse.json({ message: "Unable to update staff profile." }, { status });
+    const status =
+      error instanceof Error && error.message === "Authentication required"
+        ? 401
+        : error instanceof Error && error.message === "Forbidden"
+          ? 403
+          : 500;
+    return NextResponse.json(
+      { message: "Unable to update staff profile." },
+      { status },
+    );
   }
 }

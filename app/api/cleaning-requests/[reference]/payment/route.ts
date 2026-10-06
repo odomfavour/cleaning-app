@@ -15,7 +15,10 @@ export async function GET(request: NextRequest, context: RouteContext) {
     const cleaningRequest = await CleaningRequest.findOne({ reference }).lean();
 
     if (!cleaningRequest) {
-      return NextResponse.json({ message: "Request not found." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Request not found." },
+        { status: 404 },
+      );
     }
 
     if (
