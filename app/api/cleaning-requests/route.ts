@@ -1,3 +1,5 @@
+import { sendEmailSafely } from "@/server/services/email.service";
+import { requestReceivedEmail } from "@/server/services/email-templates";
 import { Customer, CleaningRequest, CleaningService } from "@/server/models";
 import { connectToDatabase } from "@/server/db/connect";
 import { createCleaningRequestSchema } from "@/lib/validations/cleaning-request";
@@ -180,6 +182,15 @@ export async function POST(request: Request) {
       status: "submitted",
       inspectionRequired: false,
     });
+
+    await sendEmailSafely(() => ({
+      type: "request_received",
+      to: email,
+      customerId: customer._id,
+      deliveryKey: `request-received/${cleaningRequest._id}`,
+      metadata: { requestReference: cleaningRequest.reference },
+      ...requestReceivedEmail({ name: data.contact.name, reference: cleaningRequest.reference }),
+    }));
 
     return Response.json(
       {

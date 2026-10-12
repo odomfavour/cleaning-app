@@ -102,11 +102,11 @@ export default function ServiceSection() {
 
         {/* Section Heading */}
         <div className="text-center text-white mb-20">
-          <p className="text-blue-200 tracking-widest mb-3 flex items-center justify-center gap-2 text-sm uppercase font-semibold">
+          <p className="text-brand-100 tracking-widest mb-3 flex items-center justify-center gap-2 text-sm uppercase font-semibold">
             What we do
           </p>
 
-          <h2 className="text-4xl md:text-5xl font-extrabold leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">
             Cleaning Services For <br /> Every Kind Of Space
           </h2>
         </div>
@@ -116,7 +116,7 @@ export default function ServiceSection() {
           {services.map((svc) => (
             <div key={svc.title} className="group bg-white rounded-2xl shadow-xl p-8 pt-0 text-center relative transition-transform duration-300 hover:-translate-y-1">
               <div className="w-28 h-28 mx-auto -mt-14 rounded-full border-[6px] border-primary flex items-center justify-center bg-white shadow-lg">
-                <svc.icon className="w-12 h-12 text-blue-600" strokeWidth={1.75} />
+                <svc.icon className="w-12 h-12 text-brand" strokeWidth={1.75} />
               </div>
               <h3 className="text-2xl font-bold mt-6 mb-3 text-primary">{svc.title}</h3>
               <p className="text-gray-600 leading-relaxed mb-6">{svc.desc}</p>

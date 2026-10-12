@@ -1,3 +1,6 @@
+import { sendEmailSafely } from "./email.service";
+import { quoteEmail } from "./email-templates";
+import { Customer } from "@/server/models/Customer";
 import { Types } from "mongoose";
 
 import { Quote } from "@/server/models/Quote";
@@ -71,7 +74,7 @@ export async function createAdminQuote(input: unknown) {
     throw new Error("Cleaning request not found.");
   }
 
-  const eligibleStatuses = ["new", "reviewing", "inspection_required"];
+  const eligibleStatuses = ["submitted", "new", "reviewing", "inspection_required"];
 
   if (!eligibleStatuses.includes(request.status)) {
     throw new Error(
@@ -149,6 +152,20 @@ export async function createAdminQuote(input: unknown) {
       },
     },
   );
+
+  await sendEmailSafely(async () => {
+    const customer = await Customer.findById(request.customerId).select("email").lean();
+    const destination = request.contactSnapshot?.email || customer?.email;
+    if (!destination) throw new Error("No email address is available for this quote.");
+    return {
+      type: "quote_sent",
+      to: destination,
+      customerId: request.customerId,
+      deliveryKey: `quote-sent/${quote._id}`,
+      metadata: { requestReference: request.reference, quoteId: quote._id.toString() },
+      ...quoteEmail({ reference: request.reference, quoteNumber: quote.quoteNumber, totalKobo: quote.totalKobo, expiresAt }),
+    };
+  });
 
   return {
     id: quote._id.toString(),

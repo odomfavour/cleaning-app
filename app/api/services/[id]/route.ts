@@ -1,4 +1,5 @@
 import { isValidObjectId } from "mongoose";
+import { requireAdmin } from "@/lib/auth/authorization";
 import { CleaningService } from "@/server/models";
 import { connectToDatabase } from "@/server/db/connect";
 import { updateServiceSchema } from "@/lib/validations/service";
@@ -13,6 +14,8 @@ type RouteContext = {
 
 export async function PATCH(request: Request, { params }: RouteContext) {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
     const { id } = await params;
 
     if (!isValidObjectId(id)) {

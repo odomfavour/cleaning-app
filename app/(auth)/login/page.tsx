@@ -12,6 +12,7 @@ import { CheckboxField, Input } from "@/components/kit/Field";
 import { FormAlert } from "@/components/shared/AuthParts";
 import { useLogin } from "@/lib/hooks/queries/use-auth";
 import axios from "axios";
+import { safeReturnPath } from "@/lib/auth/route-access";
 
 const schema = z.object({
   email: z
@@ -29,7 +30,7 @@ type Values = z.infer<typeof schema>;
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next");
+  const next = safeReturnPath(searchParams.get("next"));
 
   const [error, setError] = useState<string | null>(null);
 
@@ -56,7 +57,7 @@ function LoginForm() {
         password: values.password,
       });
 
-      if (result.user.role === "customer" && next?.startsWith("/")) {
+      if (next) {
         router.push(next);
         return;
       }

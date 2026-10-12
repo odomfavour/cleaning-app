@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/authorization";
 // app/api/admin/staff/route.ts
 
 import { connectToDatabase } from "@/server/db/connect";
@@ -19,6 +20,9 @@ const createStaffSchema = z.object({
 
 export async function GET() {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     await connectToDatabase();
 
     const staff = await StaffProfile.find({})
@@ -56,6 +60,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     await connectToDatabase();
 
     const body = await request.json();

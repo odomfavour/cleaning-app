@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/authorization";
 // app/api/admin/staff/[id]/route.ts
 
 import { connectToDatabase } from "@/server/db/connect";
@@ -21,6 +22,9 @@ const updateStaffSchema = z.object({
 
 export async function PATCH(request: Request, context: RouteContext) {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     await connectToDatabase();
 
     const { id } = await context.params;

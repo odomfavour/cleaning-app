@@ -15,13 +15,13 @@ export default function WhyChooseUsSection() {
     <section className="bg-white py-24 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-blue-600 font-semibold mb-3 text-sm uppercase tracking-wide">Why choose us</p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-primary leading-tight">Cleaning You Can Count On</h2>
+          <p className="text-brand font-semibold mb-3 text-sm uppercase tracking-wide">Why choose us</p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-primary leading-tight">Cleaning You Can Count On</h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {points.map((p) => (
-            <Card key={p.title} className="rounded-2xl bg-gray-50 p-8 transition-colors hover:border-blue-300 hover:bg-white">
-              <p.icon className="h-9 w-9 text-blue-600" strokeWidth={1.75} />
+            <Card key={p.title} className="rounded-2xl bg-gray-50 p-8 transition-colors hover:border-brand-100 hover:bg-white">
+              <p.icon className="h-9 w-9 text-brand" strokeWidth={1.75} />
               <h3 className="mt-5 text-xl font-bold text-primary">{p.title}</h3>
               <p className="mt-2 text-gray-600 leading-relaxed">{p.text}</p>
             </Card>

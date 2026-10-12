@@ -9,12 +9,14 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "db:seed": "tsx scripts/seed.ts",
-    "seed:users": "tsx scripts/seed-users.ts"
+    "seed:users": "tsx scripts/seed-users.ts",
+    "test": "tsx --test tests/*.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
     "@next/env": "^16.3.8",
     "@paystack/inline-js": "^2.26.0",
+    "@react-email/components": "^1.0.12",
     "@tanstack/react-query": "^5.104.0",
     "axios": "^1.20.0",
     "class-variance-authority": "^0.7.1",
@@ -28,6 +30,7 @@
     "react-day-picker": "^9.14.0",
     "react-dom": "19.3.0",
     "react-hook-form": "^7.89.0",
+    "resend": "^6.32.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.5"

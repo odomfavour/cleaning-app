@@ -53,7 +53,7 @@ export default function HeroSlider() {
   }, []);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-gray-900">
+    <div className="relative min-h-[36rem] min-h-[max(36rem,80svh)] w-full overflow-hidden bg-gray-900">
       {/* Realistic Bubble Animation Layer */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden z-10">
         {bubbles.map((bubble) => (
@@ -113,12 +113,12 @@ export default function HeroSlider() {
           />
 
           {/* Blue Filter */}
-          <div className="absolute inset-0 bg-blue-900/50" />
+          <div className="absolute inset-0 bg-brand/50" />
         </div>
       ))}
 
       {/* Text Overlay - Responsive */}
-      <div className="absolute inset-0 flex flex-col justify-center px-4 sm:px-6 md:px-8 lg:pl-20 text-white z-20 max-w-7xl mx-auto">
+      <div className="relative flex min-h-[max(36rem,80svh)] flex-col justify-center py-20 px-4 sm:px-6 md:px-16 lg:pl-20 text-white z-20 max-w-7xl mx-auto">
         <div className="text-center md:text-left">
           <h1
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight sm:leading-tight md:leading-tight transition-all duration-700"
@@ -140,7 +140,7 @@ export default function HeroSlider() {
 
           {/* CTA BUTTON - Responsive */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start mt-6 sm:mt-8">
-            <Button asChild variant="secondary" className="h-auto bg-white px-6 py-3 text-sm text-blue-900 shadow-lg hover:bg-blue-50 hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"><Link href="/request-cleaning">
+            <Button asChild variant="secondary" className="h-auto bg-white px-6 py-3 text-sm text-brand shadow-lg hover:bg-brand-50 hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"><Link href="/request-cleaning">
               Request a Cleaning
             </Link></Button>
             <Button asChild variant="outline" className="h-auto border-2 border-white/80 bg-transparent px-6 py-3 text-sm text-white hover:bg-white/10 hover:text-white sm:px-8 sm:py-4 sm:text-base"><a href="#services">
@@ -151,7 +151,7 @@ export default function HeroSlider() {
       </div>
 
       {/* Dots Navigation - Responsive Positioning */}
-      <div className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 flex flex-col gap-3 sm:gap-4 z-20">
+      <div className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-3 sm:gap-4 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -167,7 +167,7 @@ export default function HeroSlider() {
       </div>
 
       {/* Mobile Bottom Dots Alternative */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 sm:hidden z-20">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 md:hidden z-20">
         {slides.map((_, index) => (
           <button
             key={index}

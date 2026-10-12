@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/authorization";
 // app/api/admin/inspections/route.ts
 
 import { connectToDatabase } from "@/server/db/connect";
@@ -17,6 +18,9 @@ const scheduleInspectionSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     await connectToDatabase();
 
     const body = await request.json();
@@ -152,6 +156,9 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     await connectToDatabase();
 
     const inspections = await Inspection.find({})

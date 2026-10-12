@@ -447,7 +447,7 @@ export default function TrackRequestPage() {
                 )}
 
                 <Button
-                  href={`/dashboard/requests/${full.id}`}
+                  href={`/dashboard/requests/${encodeURIComponent(ref)}`}
                   variant="secondary"
                 >
                   Open full request

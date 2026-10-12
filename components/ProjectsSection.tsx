@@ -102,7 +102,7 @@ export default function ProjectsSection() {
                 <span className="block sm:inline">projects.</span>
               </h2>
             </div>
-            <Button className="hidden h-auto px-6 py-3 text-sm hover:bg-blue-800 sm:flex lg:px-8 lg:py-4 lg:text-base">
+            <Button className="hidden h-auto px-6 py-3 text-sm hover:bg-brand-700 sm:flex lg:px-8 lg:py-4 lg:text-base">
               VIEW ALL PROJECTS
               <svg
                 className="size-4 lg:size-5"
@@ -199,7 +199,7 @@ export default function ProjectsSection() {
               onClick={() => setCurrentSlide(index)}
               className={`rounded-full transition-all duration-300 ${
                 currentSlide === index
-                  ? "bg-blue-700"
+                  ? "bg-brand"
                   : "bg-gray-300 hover:bg-gray-400"
               } ${
                 currentSlide === index
@@ -213,7 +213,7 @@ export default function ProjectsSection() {
 
         {/* Mobile View All Button */}
         <div className="px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8">
-          <Button className="h-auto w-full px-6 py-4 text-sm hover:bg-blue-800 sm:hidden">
+          <Button className="h-auto w-full px-6 py-4 text-sm hover:bg-brand-700 sm:hidden">
             VIEW ALL PROJECTS
             <svg
               className="size-4"

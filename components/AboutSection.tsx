@@ -6,10 +6,10 @@ import { Sparkles, Briefcase, Home } from "lucide-react";
 const AboutSection = () => {
   return (
     <div id="about" className="scroll-mt-16">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="py-8 px-2 flex flex-col justify-center">
-            <div className="grid grid-cols-2 gap-4 mb-4 h-[600px]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="grid lg:grid-cols-2 gap-4">
+          <div className="pt-8 lg:py-8 flex flex-col justify-center">
+            <div className="grid grid-cols-2 gap-4 mb-4 h-[320px] sm:h-[440px] lg:h-[600px]">
               <section className="flex flex-col gap-4">
                 <div className="flex-1 relative min-h-0">
                   <Image
@@ -38,14 +38,14 @@ const AboutSection = () => {
               </section>
             </div>
           </div>
-          <div className="p-8 flex flex-col justify-center">
+          <div className="min-w-0 py-8 lg:px-8 flex flex-col justify-center">
             <h4 className="font-bold mb-4 uppercase text-primary ">
               <span className="mr-2">
                 <Sparkles className="inline w-5 h-5 text-primary " />
               </span>
               About Cleanin
             </h4>
-            <h2 className="text-4xl capitalize font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl capitalize font-bold mb-4">
               Professional Cleaning, Handled From Start To Finish
             </h2>
             <p className="mb-4">

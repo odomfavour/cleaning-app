@@ -62,7 +62,7 @@ export default function CTAFooterSection() {
   return (
     <>
       {/* CTA Section with Diagonal Split */}
-      <section id="request" className="relative min-h-64 overflow-hidden bg-[#0d4663]">
+      <section id="request" className="relative min-h-64 overflow-hidden bg-brand">
         {/* Left Side - Cleaning Person Image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -74,19 +74,19 @@ export default function CTAFooterSection() {
 
         {/* Diagonal Blue Section */}
         <div
-          className="absolute inset-0 bg-[#0d4663] md:[clip-path:polygon(30%_0,100%_0,100%_100%,40%_100%)]"
+          className="absolute inset-0 bg-brand lg:[clip-path:polygon(30%_0,100%_0,100%_100%,40%_100%)]"
           style={{
           }}
         />
 
         <div className="container mx-auto px-6 h-full flex items-center justify-between max-w-7xl relative z-10">
           {/* Left Side - Empty (image shows through) */}
-          <div className="hidden md:block w-1/3"></div>
+          <div className="hidden lg:block lg:w-1/4 shrink-0"></div>
 
           {/* Center/Right - Text and Button on Blue Background */}
-          <div className="flex-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-6 py-12 md:py-0 md:pl-20">
+          <div className="min-w-0 flex-1 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 py-12 lg:pl-20">
             <div className="text-white">
-              <h2 className="text-3xl md:text-5xl font-extrabold">
+              <h2 className="text-3xl sm:text-4xl xl:text-5xl font-extrabold">
                 Ready for a cleaner space?
               </h2>
               <p className="mt-3 max-w-xl text-white/90">
@@ -94,7 +94,7 @@ export default function CTAFooterSection() {
               </p>
             </div>
 
-            <Button asChild className="h-auto gap-3 bg-blue-600 px-8 py-4 font-bold whitespace-nowrap shadow-xl hover:bg-blue-700 md:ml-8 md:px-10"><Link href="/request-cleaning">
+            <Button asChild className="h-auto gap-3 bg-brand px-8 py-4 font-bold whitespace-nowrap shadow-xl hover:bg-brand-700 shrink-0 sm:px-10"><Link href="/request-cleaning">
               Request a Cleaning
               <svg
                 className="w-5 h-5"
@@ -120,7 +120,7 @@ export default function CTAFooterSection() {
       </section>
 
       {/* Footer */}
-      <footer className="relative bg-[#0d4663] text-white pt-20 pb-8 overflow-hidden">
+      <footer className="relative bg-brand text-white pt-20 pb-8 overflow-hidden">
         {/* Floating Bubbles */}
         <Bubble size="70px" left="5%" top="10%" delay="0s" duration="20s" />
         <Bubble size="55px" left="15%" top="60%" delay="3s" duration="22s" />
@@ -154,13 +154,13 @@ export default function CTAFooterSection() {
         </div>
 
         <div className="container mx-auto px-6 max-w-7xl relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-12 mb-16">
             {/* Column 1 - Company Info */}
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center">
                   <svg
-                    className="w-8 h-8 text-[#0d4663]"
+                    className="w-8 h-8 text-brand"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
@@ -198,7 +198,7 @@ export default function CTAFooterSection() {
                   <a
                     key={i}
                     href="#"
-                    className="w-11 h-11 bg-white/10 hover:bg-white hover:text-[#0d4663] rounded-full flex items-center justify-center transition-all"
+                    className="w-11 h-11 bg-white/10 hover:bg-white hover:text-brand rounded-full flex items-center justify-center transition-all"
                   >
                     <svg
                       className="w-5 h-5"
@@ -351,7 +351,7 @@ export default function CTAFooterSection() {
                 />
                 <Button
                   onClick={handleSubscribe}
-                  className="h-auto w-full bg-blue-600 px-6 py-3 font-bold text-white hover:bg-blue-700"
+                  className="h-auto w-full bg-brand px-6 py-3 font-bold text-white hover:bg-brand-700"
                 >
                   SUBSCRIBE
                   <svg
@@ -378,9 +378,9 @@ export default function CTAFooterSection() {
           </div>
 
           {/* Bottom Footer Bar */}
-          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">
+          <div className="border-t border-white/10 pt-8 text-center flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">
             <p>© 2026 Cleanin Cleaning Services. All rights reserved.</p>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6">
               <a href="#" className="hover:text-white transition-colors">
                 Setting & Privacy
               </a>

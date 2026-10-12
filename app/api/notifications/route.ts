@@ -5,6 +5,8 @@ import { Notification } from "@/server/models";
 
 const notificationTitle = (type: string) => {
   switch (type) {
+    case "request_received":
+      return "Cleaning request received";
     case "quote_sent":
       return "Your quote is ready";
     case "quote_accepted":

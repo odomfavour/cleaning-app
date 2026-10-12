@@ -30,6 +30,8 @@ const publicRequestStatus = (status: string) => {
 
 const notificationTitle = (type: string) => {
   switch (type) {
+    case "request_received":
+      return "Cleaning request received";
     case "quote_sent":
       return "Your quote is ready";
     case "quote_accepted":

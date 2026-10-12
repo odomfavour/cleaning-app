@@ -19,7 +19,7 @@ export default function Header() {
       <div className="bg-primary text-white py-3 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center text-xs md:text-sm">
           {/* Left */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-8">
             <div className="flex items-center gap-2">
               <span>🕒</span>
               <span>Mon – Sat, 8:00 am – 6:00 pm</span>
@@ -39,7 +39,7 @@ export default function Header() {
           {/* Social icons */}
           <div className="flex items-center gap-4">
             <div className="flex gap-3">
-              <a href="#" className="hover:text-blue-200 transition-colors">
+              <a href="#" className="hover:text-brand-100 transition-colors">
                 <svg
                   className="w-4 h-4"
                   fill="currentColor"
@@ -48,7 +48,7 @@ export default function Header() {
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                 </svg>
               </a>
-              <a href="#" className="hover:text-blue-200 transition-colors">
+              <a href="#" className="hover:text-brand-100 transition-colors">
                 <svg
                   className="w-4 h-4"
                   fill="currentColor"
@@ -57,7 +57,7 @@ export default function Header() {
                   <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                 </svg>
               </a>
-              <a href="#" className="hover:text-blue-200 transition-colors">
+              <a href="#" className="hover:text-brand-100 transition-colors">
                 <svg
                   className="w-4 h-4"
                   fill="currentColor"
@@ -66,7 +66,7 @@ export default function Header() {
                   <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                 </svg>
               </a>
-              <a href="#" className="hover:text-blue-200 transition-colors">
+              <a href="#" className="hover:text-brand-100 transition-colors">
                 <svg
                   className="w-4 h-4"
                   fill="currentColor"
@@ -82,14 +82,14 @@ export default function Header() {
 
       {/* --- Main Navigation --- */}
       <nav
-        className={`bg-white shadow transition-all duration-300 ${
-          isScrolled ? "fixed top-0 left-0 right-0 z-50 shadow-lg" : ""
+        className={`sticky top-0 z-50 bg-white shadow transition-shadow duration-300 ${
+          isScrolled ? "shadow-lg" : ""
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-blue-700 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-brand rounded-full flex items-center justify-center">
               <svg
                 className="w-7 h-7 text-white"
                 fill="currentColor"
@@ -103,7 +103,7 @@ export default function Header() {
               <h1 className="text-xl md:text-2xl font-bold text-gray-800">
                 Cleanin
               </h1>
-              <p className="text-xs text-blue-600">Cleaning Services</p>
+              <p className="text-xs text-brand">Cleaning Services</p>
             </div>
           </div>
 
@@ -111,9 +111,10 @@ export default function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="size-10 text-gray-700 md:hidden"
+            className="size-10 text-gray-700 xl:hidden"
             aria-label={openMenu ? "Close menu" : "Open menu"}
             aria-expanded={openMenu}
+            aria-controls="landing-mobile-menu"
             onClick={() => setOpenMenu(!openMenu)}
           >
             {openMenu ? (
@@ -128,17 +129,17 @@ export default function Header() {
           </Button>
 
           {/* Desktop Navigation */}
-          <ul className="hidden md:flex items-center gap-8 text-gray-700 font-semibold">
+          <ul className="hidden xl:flex items-center gap-6 text-gray-700 font-semibold">
             {[["Services","#services"],["How It Works","#how-it-works"],["About","#about"],["Contact","#contact"]].map(([l,h]) => (
-              <li key={h}><a href={h} className="hover:text-blue-700">{l}</a></li>
+              <li key={h}><a href={h} className="hover:text-brand-700">{l}</a></li>
             ))}
-            <li><Link href="/request" className="hover:text-blue-700">Track Request</Link></li>
-            <li><Link href="/login" className="hover:text-blue-700">Login</Link></li>
+            <li><Link href="/request" className="hover:text-brand-700">Track Request</Link></li>
+            <li><Link href="/login" className="hover:text-brand-700">Login</Link></li>
           </ul>
 
           {/* CTA Button Desktop */}
-          <div className="hidden md:flex">
-            <Button asChild className="h-auto px-6 py-3 font-bold hover:bg-blue-800"><Link href="/request-cleaning">
+          <div className="hidden xl:flex">
+            <Button asChild className="h-auto px-6 py-3 font-bold hover:bg-brand-700"><Link href="/request-cleaning">
               Request a Cleaning
             </Link></Button>
           </div>
@@ -146,16 +147,16 @@ export default function Header() {
 
         {/* --- Mobile Menu Dropdown --- */}
         {openMenu && (
-          <div className="md:hidden bg-white px-6 pb-4 shadow-inner">
+          <div id="landing-mobile-menu" onClick={() => setOpenMenu(false)} className="xl:hidden max-h-[calc(100dvh-80px)] overflow-y-auto bg-white px-6 pb-4 shadow-inner">
             <ul className="flex flex-col gap-4 text-gray-700 font-semibold">
               {[["Services","#services"],["How It Works","#how-it-works"],["About","#about"],["Contact","#contact"]].map(([l,h]) => (
-              <li key={h}><a href={h} className="hover:text-blue-700">{l}</a></li>
+              <li key={h}><a href={h} className="hover:text-brand-700">{l}</a></li>
             ))}
-            <li><Link href="/request" className="hover:text-blue-700">Track Request</Link></li>
-            <li><Link href="/login" className="hover:text-blue-700">Login</Link></li>
+            <li><Link href="/request" className="hover:text-brand-700">Track Request</Link></li>
+            <li><Link href="/login" className="hover:text-brand-700">Login</Link></li>
             </ul>
 
-            <Button asChild className="mt-4 h-auto w-full py-3 font-bold hover:bg-blue-800"><Link href="/request-cleaning">
+            <Button asChild className="mt-4 h-auto w-full py-3 font-bold hover:bg-brand-700"><Link href="/request-cleaning">
               Request a Cleaning
             </Link></Button>
           </div>

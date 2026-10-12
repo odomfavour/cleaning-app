@@ -82,12 +82,12 @@ export default function TestimonialsSection() {
 
       <div className="container mx-auto max-w-7xl relative z-10">
         {/* Header */}
-        <div className="flex justify-between items-start mb-16">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-20">
           <div>
             <p className="text-primary font-semibold mb-3 flex items-center gap-2 text-sm uppercase tracking-wide">
               <span>💬</span> TESTIMONIALS
             </p>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-primary leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-primary leading-tight">
               Our Customer&apos;s Feedback
             </h2>
           </div>
@@ -98,7 +98,7 @@ export default function TestimonialsSection() {
               variant="outline"
               size="icon"
               onClick={prevSlide}
-              className="size-14 rounded-full border-2 border-primary text-primary hover:border-blue-700 hover:bg-blue-700 hover:text-white"
+              className="size-14 rounded-full border-2 border-primary text-primary hover:border-brand-700 hover:bg-brand-700 hover:text-white"
               aria-label="Previous testimonials"
             >
               <svg
@@ -119,7 +119,7 @@ export default function TestimonialsSection() {
               variant="outline"
               size="icon"
               onClick={nextSlide}
-              className="size-14 rounded-full border-2 border-primary text-primary hover:border-blue-700 hover:bg-blue-700 hover:text-white"
+              className="size-14 rounded-full border-2 border-primary text-primary hover:border-brand-700 hover:bg-brand-700 hover:text-white"
               aria-label="Next testimonials"
             >
               <svg
@@ -140,7 +140,7 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Testimonial Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-20 mb-12">
           {testimonials[currentSlide].map((testimonial, index) => (
             <div
               key={index}

@@ -1,3 +1,5 @@
+import { sendBookingConfirmation } from "@/server/services/booking-email.service";
+import { CleaningRequest } from "@/server/models/CleaningRequest";
 import { connectToDatabase } from "@/server/db/connect";
 import { Booking } from "@/server/models/Booking";
 import { Payment } from "@/server/models/Payment";
@@ -67,15 +69,6 @@ export async function POST(request: NextRequest) {
     }
 
     /*
-     * Idempotency.
-     */
-    if (payment.status === "success") {
-      return NextResponse.json({
-        received: true,
-      });
-    }
-
-    /*
      * Never mark paid solely because the webhook says success.
      */
     if (transaction.status !== "success") {
@@ -136,32 +129,24 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!payment.bookingId) {
-      /*
-       * Replace with your actual Booking schema.
-       */
-      const booking = await Booking.create({
+    const booking = await Booking.findOneAndUpdate(
+      { quoteId: quote._id },
+      { $setOnInsert: {
         bookingNumber: generateBookingNumber(),
-
         requestId: quote.requestId,
-
         quoteId: quote._id,
-
         customerId: payment.customerId,
-
         paymentReference: payment.reference,
-
         amountKobo: payment.amountKobo,
-
-        confirmedAt: new Date(),
-
+        confirmedAt: payment.paidAt ?? new Date(),
         status: "confirmed",
-      });
-
-      payment.bookingId = booking._id;
-
-      await payment.save();
-    }
+      } },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+    payment.bookingId = booking._id;
+    await payment.save();
+    await CleaningRequest.updateOne({ _id: quote.requestId }, { $set: { status: "converted" } });
+    await sendBookingConfirmation(booking);
 
     return NextResponse.json({
       received: true,

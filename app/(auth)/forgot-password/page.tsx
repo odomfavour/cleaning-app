@@ -8,15 +8,21 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/kit/Button";
 import { Input } from "@/components/kit/Field";
+import { getApiErrorMessage } from "@/lib/api/errors";
 import { forgotPassword } from "@/lib/api/services/auth.service";
 
 const schema = z.object({ email: z.string().min(1, "Enter your email address").email("Enter a valid email address") });
 type Values = z.infer<typeof schema>;
 
 export default function ForgotPasswordPage() {
+  const [error, setError] = useState("");
   const [sentTo, setSentTo] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Values>({ resolver: zodResolver(schema) });
-  const onSubmit = async (v: Values) => { await forgotPassword(v.email); setSentTo(v.email); };
+  const onSubmit = async (v: Values) => {
+    setError("");
+    try { await forgotPassword(v.email); setSentTo(v.email); }
+    catch (failure) { setError(getApiErrorMessage(failure, "Unable to request a reset link.")); }
+  };
 
   if (sentTo) return (
     <div className="animate-pop-in text-center" role="status">
@@ -35,6 +41,7 @@ export default function ForgotPasswordPage() {
       <p className="mt-2 text-muted-foreground">Enter the email you registered with and we&apos;ll send you a reset link.</p>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-5">
         <Input label="Email" type="email" autoComplete="email" error={errors.email?.message} {...register("email")} />
+        {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
         <Button type="submit" size="lg" full loading={isSubmitting}>{isSubmitting ? "Sending…" : "Send reset link"}</Button>
       </form>
     </>
