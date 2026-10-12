@@ -55,14 +55,14 @@ export async function destroySession() {
 }
 
 export async function getCurrentUser() {
-  await connectToDatabase();
-
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
 
   if (!token) {
     return null;
   }
+
+  await connectToDatabase();
 
   const session = await Session.findOne({
     tokenHash: hashToken(token),

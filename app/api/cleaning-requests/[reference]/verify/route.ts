@@ -1,3 +1,4 @@
+import { sendBookingConfirmation } from "@/server/services/booking-email.service";
 import { connectToDatabase } from "@/server/db/connect";
 import { Booking, CleaningRequest, Payment, Quote } from "@/server/models";
 import { canAccessCustomerRequest } from "@/server/auth/customer-request-access";
@@ -176,6 +177,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
         { $set: { status: "converted" } },
       );
     }
+
+    await sendBookingConfirmation(booking);
 
     return NextResponse.json({
       payment: {

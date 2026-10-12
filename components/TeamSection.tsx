@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 interface TeamMember {
@@ -38,42 +37,20 @@ export default function TeamSection() {
 
   return (
     <section className="py-20 px-6 bg-gray-50 relative">
-      {/* Back to Top Button */}
-      <Button className="fixed right-8 bottom-8 z-50 h-auto flex-col gap-1 bg-blue-700 p-4 shadow-lg hover:bg-blue-800">
-        <svg
-          className="size-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={3}
-            d="M5 10l7-7m0 0l7 7m-7-7v18"
-          />
-        </svg>
-        <span
-          className="text-xs font-bold writing-mode-vertical"
-          style={{ writingMode: "vertical-rl" }}
-        >
-          GO BACK TOP
-        </span>
-      </Button>
 
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <p className="text-blue-600 font-semibold mb-3 flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
+          <p className="text-brand font-semibold mb-3 flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
             <span>👥</span> We&apos;ve Awesome Team Members
           </p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-primary leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-primary leading-tight">
             Meet Our Experienced &amp; <br /> Professional Team
           </h2>
         </div>
 
         {/* Team Grid - 4 members static */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
           {teamMembers.map((member, index) => (
             <div key={index} className="group relative">
               <div className="relative overflow-hidden rounded-2xl shadow-lg h-[450px]">
@@ -86,7 +63,7 @@ export default function TeamSection() {
                 />
 
                 {/* Hover Overlay with Social Icons */}
-                <div className="absolute inset-0 bg-blue-900/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-brand/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <div className="flex gap-3">
                     {[
                       <path
@@ -109,7 +86,7 @@ export default function TeamSection() {
                       <a
                         key={i}
                         href="#"
-                        className="w-12 h-12 bg-white text-blue-900 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"
+                        className="w-12 h-12 bg-white text-brand rounded-full flex items-center justify-center hover:bg-brand-700 hover:text-white transition-all"
                       >
                         <svg
                           className="size-5"
@@ -128,9 +105,9 @@ export default function TeamSection() {
                 </div>
 
                 {/* Name and Role */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-900 to-transparent p-6 text-white">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand to-transparent p-6 text-white">
                   <h3 className="text-xl font-bold">{member.name}</h3>
-                  <p className="text-blue-200">{member.role}</p>
+                  <p className="text-brand-100">{member.role}</p>
                 </div>
               </div>
             </div>

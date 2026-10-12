@@ -15,13 +15,13 @@ export default function FaqSection() {
     <section id="faq" className="bg-white py-24 px-6 scroll-mt-16">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-blue-600 font-semibold mb-3 text-sm uppercase tracking-wide">FAQ</p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-primary leading-tight">Common Questions</h2>
+          <p className="text-brand font-semibold mb-3 text-sm uppercase tracking-wide">FAQ</p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-primary leading-tight">Common Questions</h2>
         </div>
         <Accordion type="single" collapsible defaultValue="faq-0" className="border-y">
           {faqs.map((f, i) => (
             <AccordionItem key={f.q} value={`faq-${i}`}>
-              <AccordionTrigger className="py-5 text-lg font-semibold text-primary hover:text-blue-700 hover:no-underline">{f.q}</AccordionTrigger>
+              <AccordionTrigger className="py-5 text-lg font-semibold text-primary hover:text-brand-700 hover:no-underline">{f.q}</AccordionTrigger>
               <AccordionContent className="pb-5 pr-9 text-base leading-relaxed text-gray-600">{f.a}</AccordionContent>
             </AccordionItem>
           ))}

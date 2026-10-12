@@ -1,4 +1,5 @@
 import { createServiceSchema } from "@/lib/validations/service";
+import { requireAdmin } from "@/lib/auth/authorization";
 import { connectToDatabase } from "@/server/db/connect";
 import { CleaningService } from "@/server/models/CleaningService";
 import { serviceCode, slugify } from "@/server/utils/service";
@@ -42,6 +43,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
     const body = await request.json();
     console.log("POST /api/services body:", body);
     const parsed = createServiceSchema.safeParse(body);

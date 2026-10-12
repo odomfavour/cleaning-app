@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/authorization";
 import { connectToDatabase } from "@/server/db/connect";
 import {
   CleaningRequest,
@@ -13,6 +14,9 @@ type RouteContext = {
 
 export async function GET(_request: Request, context: RouteContext) {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     await connectToDatabase();
 
     const { id } = await context.params;

@@ -1,3 +1,5 @@
+import { sendEmail } from "@/server/services/email.service";
+import { verificationEmail } from "@/server/services/email-templates";
 import { randomInt, createHash } from "node:crypto";
 
 import { CleaningRequest, RequestAccessCode } from "@/server/models";
@@ -29,18 +31,6 @@ function maskEmail(email?: string) {
   return `${local.slice(0, 2)}***@${domain}`;
 }
 
-function maskPhone(phone?: string) {
-  if (!phone) return "";
-
-  const digits = phone.replace(/\D/g, "");
-
-  if (digits.length <= 4) {
-    return "***";
-  }
-
-  return `***${digits.slice(-4)}`;
-}
-
 function hashCode(code: string) {
   return createHash("sha256").update(code).digest("hex");
 }
@@ -58,11 +48,15 @@ export async function POST(request: Request, context: RouteContext) {
       );
     }
 
+    if (body.channel === "phone") {
+      return Response.json({ error: "SMS verification is unavailable. Please use email." }, { status: 503 });
+    }
+
     await connectToDatabase();
 
     const cleaningRequest = await CleaningRequest.findOne({
       reference: reference.trim(),
-    }).select("_id contactSnapshot");
+    }).select("_id customerId contactSnapshot");
 
     if (!cleaningRequest) {
       return Response.json(
@@ -72,20 +66,16 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     const email = cleaningRequest.contactSnapshot?.email;
-    const phone = cleaningRequest.contactSnapshot?.phone;
-
-    if (body.channel === "email" && !email) {
-      return Response.json(
-        { error: "No email address is available for this request." },
-        { status: 400 },
-      );
+    if (!email) {
+      return Response.json({ error: "No email address is available for this request." }, { status: 400 });
     }
 
-    if (body.channel === "phone" && !phone) {
-      return Response.json(
-        { error: "No phone number is available for this request." },
-        { status: 400 },
-      );
+    const recentCode = await RequestAccessCode.exists({
+      requestId: cleaningRequest._id,
+      createdAt: { $gt: new Date(Date.now() - 60_000) },
+    });
+    if (recentCode) {
+      return Response.json({ error: "Please wait a minute before requesting another code." }, { status: 429 });
     }
 
     const code = randomInt(100000, 1000000).toString();
@@ -105,7 +95,7 @@ export async function POST(request: Request, context: RouteContext) {
       },
     );
 
-    await RequestAccessCode.create({
+    const accessCode = await RequestAccessCode.create({
       requestId: cleaningRequest._id,
       channel: body.channel,
       codeHash: hashCode(code),
@@ -113,19 +103,21 @@ export async function POST(request: Request, context: RouteContext) {
       attempts: 0,
     });
 
-    /*
-     * Replace this with your actual email/SMS provider.
-     *
-     * Never return the actual code in production.
-     */
-    if (process.env.NODE_ENV !== "production") {
-      console.log(
-        `[REQUEST ACCESS] ${reference} ${body.channel} code: ${code}`,
-      );
+    try {
+      await sendEmail({
+        type: "verification",
+        to: email!,
+        customerId: cleaningRequest.customerId,
+        metadata: { requestReference: reference },
+        ...verificationEmail(code),
+      });
+    } catch {
+      await RequestAccessCode.deleteOne({ _id: accessCode._id });
+      return Response.json({ error: "Unable to send verification code. Please try again." }, { status: 502 });
     }
 
     return Response.json({
-      sentTo: body.channel === "email" ? maskEmail(email) : maskPhone(phone),
+      sentTo: maskEmail(email),
     });
   } catch (error) {
     console.error(

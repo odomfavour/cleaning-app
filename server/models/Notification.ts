@@ -18,6 +18,7 @@ const notificationSchema = new Schema(
       type: String,
       enum: [
         "verification",
+        "request_received",
         "quote_sent",
         "quote_accepted",
         "quote_declined",
@@ -43,6 +44,12 @@ const notificationSchema = new Schema(
       enum: ["queued", "sent", "failed"],
       default: "queued",
       index: true,
+    },
+
+    deliveryKey: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
 
     providerMessageId: {

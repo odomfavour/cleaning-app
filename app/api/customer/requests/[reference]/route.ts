@@ -1,4 +1,5 @@
 import { canAccessCustomerRequest } from "@/server/auth/customer-request-access";
+import { requestLookup } from "@/server/utils/request-lookup";
 import { connectToDatabase } from "@/server/db/connect";
 import { Booking, CleaningRequest, Customer, Inspection, Quote } from "@/server/models";
 import { NextResponse } from "next/server";
@@ -22,7 +23,7 @@ export async function GET(request: Request, context: RouteContext) {
   try {
     await connectToDatabase();
     const { reference } = await context.params;
-    const cleaningRequest = await CleaningRequest.findOne({ reference: reference.trim() }).lean();
+    const cleaningRequest = await CleaningRequest.findOne(requestLookup(reference)).lean();
 
     if (!cleaningRequest) return NextResponse.json({ message: "Request not found." }, { status: 404 });
     if (!(await canAccessCustomerRequest(request, cleaningRequest._id.toString(), cleaningRequest.customerId.toString()))) {
@@ -124,7 +125,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   try {
     await connectToDatabase();
     const { reference } = await context.params;
-    const cleaningRequest = await CleaningRequest.findOne({ reference: reference.trim() });
+    const cleaningRequest = await CleaningRequest.findOne(requestLookup(reference));
 
     if (!cleaningRequest) return NextResponse.json({ message: "Request not found." }, { status: 404 });
     if (!(await canAccessCustomerRequest(request, cleaningRequest._id.toString(), cleaningRequest.customerId.toString()))) {

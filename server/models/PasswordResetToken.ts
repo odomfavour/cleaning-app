@@ -5,7 +5,12 @@ const passwordResetTokenSchema = new Schema(
     customerId: {
       type: Types.ObjectId,
       ref: "Customer",
-      required: true,
+      index: true,
+    },
+
+    userId: {
+      type: Types.ObjectId,
+      ref: "User",
       index: true,
     },
 

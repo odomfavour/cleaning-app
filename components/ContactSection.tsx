@@ -41,37 +41,15 @@ export default function ContactSection() {
 
   return (
     <section
-id="contact"       className="relative py-20 px-6 bg-cover bg-center bg-fixed bg-no-repeat min-h-screen flex items-center"
+id="contact"       className="relative py-12 px-4 sm:py-20 sm:px-6 bg-cover bg-center lg:bg-fixed bg-no-repeat min-h-screen flex items-center"
       style={{
         backgroundImage:
           "url(https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1920&h=1080&fit=crop)",
       }}
     >
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-[#1a3a4a]/60"></div>
+      <div className="absolute inset-0 bg-brand/80"></div>
 
-      {/* Back to Top Button */}
-      <Button className="fixed right-8 bottom-8 z-50 h-auto flex-col gap-1 bg-blue-700 p-4 shadow-lg hover:bg-blue-800">
-        <svg
-          className="size-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={3}
-            d="M5 10l7-7m0 0l7 7m-7-7v18"
-          />
-        </svg>
-        <span
-          className="text-xs font-bold"
-          style={{ writingMode: "vertical-rl" }}
-        >
-          GO BACK TOP
-        </span>
-      </Button>
 
       <div className="container mx-auto max-w-7xl relative z-10">
         {/* Header */}
@@ -79,16 +57,16 @@ id="contact"       className="relative py-20 px-6 bg-cover bg-center bg-fixed bg
           <p className="font-semibold mb-3 flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
             Contact us
           </p>
-          <h2 className="text-4xl md:text-5xl font-extrabold leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">
             Questions before you request?<br /> We are happy to help.
           </h2>
         </div>
 
         {/* Contact Form and Info Container */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-          <div className="grid md:grid-cols-3">
+          <div className="grid lg:grid-cols-3">
             {/* Left Side - Contact Form */}
-            <div className="md:col-span-2 p-12 bg-gray-50">
+            <div className="lg:col-span-2 min-w-0 p-5 sm:p-8 xl:p-12 bg-gray-50">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 {/* Name Input */}
                 <div className="relative">
@@ -210,7 +188,7 @@ id="contact"       className="relative py-20 px-6 bg-cover bg-center bg-fixed bg
               {/* Submit Button */}
               <Button
                 onClick={handleSubmit}
-                className="h-auto gap-3 px-10 py-4 font-bold hover:bg-blue-800"
+                className="h-auto gap-3 w-full sm:w-auto px-6 sm:px-10 py-4 font-bold hover:bg-brand-700"
               >
                 SEND US MESSAGE
                 <svg
@@ -235,7 +213,7 @@ id="contact"       className="relative py-20 px-6 bg-cover bg-center bg-fixed bg
             </div>
 
             {/* Right Side - Contact Info */}
-            <div className="bg-[#0d3d5c] text-white p-12 flex flex-col justify-center">
+            <div className="bg-brand text-white min-w-0 p-5 sm:p-8 xl:p-12 flex flex-col justify-center">
               <h3 className="text-3xl font-bold mb-10">Contact Info</h3>
 
               <div className="space-y-8">

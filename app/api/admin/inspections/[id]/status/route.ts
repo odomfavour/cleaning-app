@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/authorization";
 import { connectToDatabase } from "@/server/db/connect";
 import { StaffProfile } from "@/server/models";
 import { CleaningRequest } from "@/server/models/CleaningRequest";
@@ -16,6 +17,9 @@ const schema = z.object({
 
 export async function PATCH(request: Request, context: RouteContext) {
   try {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     await connectToDatabase();
 
     const { id } = await context.params;
