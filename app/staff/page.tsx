@@ -45,7 +45,7 @@ export default function StaffHome() {
         {fmtLong(new Date().toISOString())}
       </p>
 
-      <div className="mb-7 grid grid-cols-3 gap-2.5">
+      <div className="mb-7 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
         <StatCard label="Today" value={stats.today} icon={Sun} tone="amber" />
 
         <StatCard

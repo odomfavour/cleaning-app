@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { Briefcase, ClipboardCheck, Home, User } from "lucide-react";
 import { Logo, Avatar } from "@/components/kit/Misc";
 import { NotificationPanel } from "@/components/shared/NotificationPanel";
-import { BottomNav, type NavItem } from "@/components/shared/AppShell";
+import { type NavItem } from "@/components/shared/AppShell";
+import { HeaderMenu } from "@/components/shared/HeaderMenu";
 import { useCurrentUser } from "@/lib/hooks/queries/use-auth";
 import { cn } from "@/lib/utils";
 
@@ -25,14 +26,14 @@ export function StaffShell({ children }: { children: React.ReactNode }) {
   const { data: user } = useCurrentUser();
   return (
     <div className="min-h-dvh bg-muted/40">
-      <header className="sticky top-0 z-20 border-b border-border bg-white">
-        <div className="mx-auto flex h-16 max-w-3xl items-center gap-4 px-4">
+      <header className="sticky top-0 z-20 border-b border-border bg-white/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-3xl items-center gap-2 px-4 sm:gap-3 sm:px-6">
           <Link href="/staff" aria-label="Staff home">
             <Logo />
           </Link>
-          <nav className="ml-6 hidden gap-1 sm:flex" aria-label="Main">
+          <nav className="ml-2 hidden gap-1 md:flex" aria-label="Main">
             {nav.map((n) => {
-              const a = n.exact ? path === n.href : path.startsWith(n.href);
+              const a = n.exact ? path === n.href : path === n.href || path.startsWith(n.href + "/");
               return (
                 <Link
                   key={n.href}
@@ -50,18 +51,16 @@ export function StaffShell({ children }: { children: React.ReactNode }) {
               );
             })}
           </nav>
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex shrink-0 items-center gap-1">
             <NotificationPanel audience="staff" />
             <Avatar name={user?.name ?? "Staff account"} size="sm" />
+            <HeaderMenu links={nav} />
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-3xl px-4 pb-28 pt-5 sm:pb-10 sm:pt-8">
+      <main className="mx-auto w-full max-w-3xl px-4 pb-10 pt-5 sm:pt-8">
         {children}
       </main>
-      <div className="sm:hidden">
-        <BottomNav items={nav} path={path} />
-      </div>
     </div>
   );
 }

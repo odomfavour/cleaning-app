@@ -29,13 +29,13 @@ export function Stars({ value, onChange, size = 18 }: { value: number; onChange?
 
 export function Logo({ light, className }: { light?: boolean; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-700">
-        <svg className="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><circle cx="12" cy="12" r="2" fill="#1d4ed8" /></svg>
+    <span className={cn("inline-flex shrink-0 items-center gap-2.5 whitespace-nowrap", className)}>
+      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand">
+        <svg className="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><circle cx="12" cy="12" r="2" fill="#0a3d5c" /></svg>
       </span>
       <span className="leading-tight">
         <span className={cn("block text-xl font-bold", light ? "text-white" : "text-foreground")}>Cleanin</span>
-        <span className={cn("block text-[11px]", light ? "text-blue-200" : "text-blue-600")}>Cleaning Services</span>
+        <span className={cn("block text-[11px]", light ? "text-brand-100" : "text-brand")}>Cleaning Services</span>
       </span>
     </span>
   );
