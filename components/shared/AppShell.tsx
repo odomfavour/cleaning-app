@@ -76,10 +76,10 @@ export function AppShell({ nav, bottomNav, audience, user, cta, portal, children
         </SheetContent>
       </Sheet>
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur sm:px-6">
-          <UiButton variant="ghost" size="icon" className="-ml-2 lg:hidden" onClick={() => setDrawer(true)} aria-label="Open menu"><Menu className="size-5" /></UiButton>
-          <Link href="/" className="lg:hidden" aria-label="Cleanin home"><Logo /></Link>
-          <div className="ml-auto flex items-center gap-2">
+        <header className="sticky top-0 z-20 flex h-16 min-w-0 items-center gap-2 sm:gap-3 border-b bg-background/95 px-4 backdrop-blur sm:px-6">
+          <UiButton variant="ghost" size="icon" className="-ml-2 size-11 shrink-0 lg:hidden" onClick={() => setDrawer(true)} aria-label="Open menu"><Menu className="size-5" /></UiButton>
+          <Link href="/" className="shrink-0 lg:hidden" aria-label="Cleanin home"><Logo /></Link>
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             {cta && <><Button href={cta.href} size="sm" className="hidden sm:inline-flex"><Plus />{cta.label}</Button></>}
             <NotificationPanel audience={audience} />
           </div>
